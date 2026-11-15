@@ -2,7 +2,7 @@
 import { discardStaleResultMd, outputDirFromTestFile, remapRecordedStartUrl } from "./lib/recordings.mjs";
 
 const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
-const testFile = process.env.TEST_FILE || "tests/checkout_test.md";
+const testFile = process.env.TEST_FILE || "tests/receipt_checkout_test.md";
 const previewUrl = process.env.PREVIEW_URL || "";
 const outputDir = `${workspace.replace(/\/$/, "")}/${outputDirFromTestFile(testFile)}`;
 

@@ -61,7 +61,7 @@ jobs:
       - name: Receipt
         uses: ./
         with:
-          test-file: tests/checkout_test.md
+          test-file: tests/receipt_checkout_test.md
           production-url: ${{ vars.RECEIPT_PRODUCTION_URL }}
           allowlist: shop/**
           max-fixes: "3"

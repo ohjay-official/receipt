@@ -13,7 +13,7 @@ import { redact, setOutput } from "./lib/github-output.mjs";
 import { resolveDeploymentSha } from "./lib/preview.mjs";
 
 const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
-const testFile = process.env.TEST_FILE || "tests/checkout_test.md";
+const testFile = process.env.TEST_FILE || "tests/receipt_checkout_test.md";
 const maxFixes = Number(process.env.MAX_FIXES || 3);
 const allowlist = (process.env.ALLOWLIST || "shop/**")
   .split(",")

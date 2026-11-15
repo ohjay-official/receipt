@@ -6,7 +6,7 @@ import { redact } from "./lib/github-output.mjs";
 import { resolveDeploymentSha } from "./lib/preview.mjs";
 
 const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
-const testFile = process.env.TEST_FILE || "tests/checkout_test.md";
+const testFile = process.env.TEST_FILE || "tests/receipt_checkout_test.md";
 const inbox = readKaneInbox(workspace, testFile);
 
 function excerpt(resultMd) {
