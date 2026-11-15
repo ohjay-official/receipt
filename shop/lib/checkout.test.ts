@@ -32,4 +32,9 @@ test("Pay must be clickable at a 390px mobile viewport", () => {
     `Pay must also be clickable at Kane's 800px minimum window (overlay uses max-width: ${NARROW_VIEWPORT_MAX_PX}px).`,
   );
   assert.equal(payButtonBlocked(1280), false);
+  assert.equal(
+    payButtonBlocked(1280, true),
+    false,
+    "Phone-layout preview must not cover Pay after the seeded overlay is removed.",
+  );
 });

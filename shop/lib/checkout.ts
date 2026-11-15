@@ -45,6 +45,6 @@ export function applyCoupon(
  */
 export const SEED_BLOCK_PAY_ON_MOBILE = false;
 
-export function payButtonBlocked(viewportWidth: number): boolean {
-  return SEED_BLOCK_PAY_ON_MOBILE && viewportWidth <= NARROW_VIEWPORT_MAX_PX;
+export function payButtonBlocked(viewportWidth: number, phoneLayout = false): boolean {
+  return SEED_BLOCK_PAY_ON_MOBILE && (phoneLayout || viewportWidth <= NARROW_VIEWPORT_MAX_PX);
 }
