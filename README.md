@@ -23,10 +23,14 @@ Proof (do not trust a green badge without the clip):
 - Evidence of that catch: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149438398
 - Green re-verify (manual `workflow_dispatch`): https://github.com/ohjay-official/receipt/actions/runs/43684482513
 - Green evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149882316
-- Auto-trigger green run (`pull_request`, no manual dispatch): https://github.com/ohjay-official/receipt/actions/runs/43685063728
+- Auto-trigger green run on the demo PR (`pull_request`, no manual dispatch): https://github.com/ohjay-official/receipt/actions/runs/43685063728
 - Evidence from that auto-run (includes `tests/output-checkout/` recordings): https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149699945
+- Auto-trigger proof PR (leave open; checkout still $29): https://github.com/ohjay-official/receipt/pull/2
+- Proof-PR preview: https://receipt-git-demo-t8-auto-trigger-proof-oh-jay-s-projects.vercel.app
+- Auto-trigger red run on that PR (replay remapped onto the $29 preview): https://github.com/ohjay-official/receipt/actions/runs/43686037015
+- Evidence of that $29 catch: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14150058337
 
-CI: on this demo PR, Action unit tests, Shop build, and Shop price contract are all green. On `main`, Shop price contract stays red on purpose: checkout is still the seeded $29, and the unit test asserts checkout equals the $19 pricing source of truth.
+CI: on the demo PR, Action unit tests, Shop build, and Shop price contract are all green. On `main` (and on the proof PR, which still has the seeded bug), Shop price contract stays red on purpose: checkout is $29, and the unit test asserts checkout equals the $19 pricing source of truth.
 
 ---
 
