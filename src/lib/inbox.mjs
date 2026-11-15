@@ -39,9 +39,12 @@ export function parseResultMd(text) {
       if (key === "duration_s") result.duration_s = Number(val);
     }
   }
-  const stepRe = /^##\s+(.+?)\s+(✓|✗|⏭)\s+(passed|failed|skipped)\b([^\n]*)\n?([\s\S]*?)(?=^##\s+|\s*$)/gm;
-  let match;
-  while ((match = stepRe.exec(text))) {
+  // Split on H2 headings so a failed step's body (including a "Reason:"
+  // line after an md5 line) is not truncated by a multiline `$` match.
+  const parts = text.split(/^##\s+/m).slice(1);
+  for (const part of parts) {
+    const match = part.match(/^(.+?)\s+(✓|✗|⏭)\s+(passed|failed|skipped)\b([^\n]*)\n?([\s\S]*)$/);
+    if (!match) continue;
     const meta = match[4].trim();
     const body = (match[5] || "").trim();
     const step = {

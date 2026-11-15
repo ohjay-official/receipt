@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { Buffer } from "node:buffer";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
@@ -132,7 +133,15 @@ async function main() {
     return;
   }
 
-  const extraHeader = `AUTHORIZATION: bearer ${token}`;
+  // actions/checkout persists AUTHORIZATION: basic … on the repo. Adding a
+  // second Authorization header makes GitHub return 400 "Duplicate header".
+  try {
+    git(["config", "--unset-all", "http.https://github.com/.extraheader"]);
+  } catch {
+    // already unset
+  }
+  const basic = Buffer.from(`x-access-token:${token}`, "utf8").toString("base64");
+  const extraHeader = `AUTHORIZATION: basic ${basic}`;
   try {
     execFileSync(
       "git",
