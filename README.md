@@ -30,6 +30,16 @@ Proof (do not trust a green badge without the clip):
 - Refusal run (`RECEIPT_DEMO_CHEAT=1`, no fixer commit): https://github.com/ohjay-official/receipt/actions/runs/43700368892
 - Refusal evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14155439852
 
+After the multi-page site rebuild, a fresh proof PR confirmed the same loop (leave it open too):
+
+- Rebuild verification PR: https://github.com/ohjay-official/receipt/pull/5
+- Preview after the fix: https://receipt-git-demo-t12-site-loop-oh-jay-s-projects.vercel.app
+- Red Kane run: https://github.com/ohjay-official/receipt/actions/runs/43701888824
+- Evidence of that catch: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14157390481
+- Fixer commit: `receipt-fix: 1` (`55b2815`) — `shop/lib/prices.ts` and `shop/lib/checkout.ts` only
+- Green re-verify (all five steps, attempts 1 / 3): https://github.com/ohjay-official/receipt/actions/runs/43702361655
+- Green evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14156718986
+
 Earlier loops (leave #1 and #2 open as well):
 
 - First live catch and green re-verify: [PR #1](https://github.com/ohjay-official/receipt/pull/1) — red [43683895636](https://github.com/ohjay-official/receipt/actions/runs/43683895636), green [43684482513](https://github.com/ohjay-official/receipt/actions/runs/43684482513)
