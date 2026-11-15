@@ -6,14 +6,14 @@
  *    applied to a $0 handling fee, so the total does not move.
  * 2. At a 390px mobile viewport the Pay button is covered by an overlay.
  */
-import { PRO_PLAN_USD } from "./prices";
-
 export const COUPON_CODE = "LAUNCH10";
 export const COUPON_PERCENT = 10;
 export const MOBILE_VIEWPORT_PX = 390;
+/** Overlay also applies up to this width so Kane's 800px minimum window still hits the bug. */
+export const NARROW_VIEWPORT_MAX_PX = 900;
 
 /** Correct discounted total for the advertised Pro price. */
-export function launch10TotalUsd(proPrice: number = PRO_PLAN_USD): number {
+export function launch10TotalUsd(proPrice: number): number {
   return Math.round(proPrice * (100 - COUPON_PERCENT)) / 100;
 }
 
@@ -41,10 +41,11 @@ export function applyCoupon(
 
 /**
  * Seeded mobile bug flag. When true, checkout renders a fixed overlay
- * that covers Pay at max-width: 390px. Desktop is unaffected.
+ * that covers Pay at max-width: 900px (a 390px phone and Kane's 800px
+ * minimum window). Wide desktop viewports are unaffected.
  */
 export const SEED_BLOCK_PAY_ON_MOBILE = true;
 
 export function payButtonBlocked(viewportWidth: number): boolean {
-  return SEED_BLOCK_PAY_ON_MOBILE && viewportWidth <= MOBILE_VIEWPORT_PX;
+  return SEED_BLOCK_PAY_ON_MOBILE && viewportWidth <= NARROW_VIEWPORT_MAX_PX;
 }

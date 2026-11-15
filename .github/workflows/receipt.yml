@@ -47,7 +47,7 @@ jobs:
        github.event.action == 'vercel.deployment.success' &&
        github.event.client_payload.environment != 'production')
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       RECEIPT_GIT_TOKEN: ${{ secrets.RECEIPT_GIT_TOKEN }}
     steps:

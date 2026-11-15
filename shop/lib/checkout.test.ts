@@ -6,6 +6,7 @@ import {
   COUPON_CODE,
   launch10TotalUsd,
   MOBILE_VIEWPORT_PX,
+  NARROW_VIEWPORT_MAX_PX,
   payButtonBlocked,
   SEED_BLOCK_PAY_ON_MOBILE,
 } from "./checkout.ts";
@@ -24,6 +25,11 @@ test("Pay must be clickable at a 390px mobile viewport", () => {
     payButtonBlocked(MOBILE_VIEWPORT_PX),
     false,
     `Pay is blocked at ${MOBILE_VIEWPORT_PX}px (SEED_BLOCK_PAY_ON_MOBILE=${SEED_BLOCK_PAY_ON_MOBILE}). That overlay is the seeded mobile bug.`,
+  );
+  assert.equal(
+    payButtonBlocked(800),
+    false,
+    `Pay must also be clickable at Kane's 800px minimum window (overlay uses max-width: ${NARROW_VIEWPORT_MAX_PX}px).`,
   );
   assert.equal(payButtonBlocked(1280), false);
 });

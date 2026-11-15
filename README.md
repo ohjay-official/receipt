@@ -45,7 +45,7 @@ CI: Action unit tests and Shop build stay green. On `main`, the Shop contracts j
 2. Choose Pro and continue to checkout (`/checkout`).
 3. Checkout must show **$19** for Pro, not any other amount.
 4. Enter coupon code **LAUNCH10** and apply it. The Pro total must become **$17.10** (10% off $19), not stay the same, show NaN, or any other amount.
-5. Narrow the viewport to **390px** (a typical phone). Click **Pay**. A confirmation such as “Payment accepted” must appear. Fail if Pay does nothing, is covered, or cannot be clicked at this width.
+5. Use a narrow viewport and click **Pay**. A confirmation such as “Payment accepted” must appear. Fail if Pay does nothing, is covered, or cannot be clicked. A 390px phone must hit this; Kane 0.10 cannot open a window under 800px, so the test resizes to **800px** and the overlay also applies at `max-width: 900px`.
 
 <!-- /kane:how-to-test -->
 
@@ -55,7 +55,7 @@ The first Kane run on a PR that still has the seeded bugs (checkout **$29**, cou
 
 ### Honest note: Kane 0.10.4 has no 390px viewport setting
 
-Official testmd frontmatter has no viewport or device-width key. `kane-cli config set-window` rejects widths under 800px. Kane “mobile” targets (`emulator`, `simulator`, `android`, `ios`) are native apps, not a Chrome phone viewport, and `--remote` is out of scope on a $0 budget. Step 5 therefore tells Kane to narrow the page viewport itself to 390px. The seeded Pay overlay is a CSS `@media (max-width: 390px)` rule, so a successful viewport resize will still hit the bug.
+Official testmd frontmatter has no viewport or device-width key. `kane-cli config set-window` rejects widths under 800px. Kane “mobile” targets (`emulator`, `simulator`, `android`, `ios`) are native apps, not a Chrome phone viewport, and `--remote` is out of scope on a $0 budget. Step 5 therefore tells Kane to resize to 800px (its minimum) and not to keep retrying a 390px window. The seeded Pay overlay is a CSS `@media (max-width: 900px)` rule, so a 390px phone and Kane’s 800px window both hit the bug; a wide desktop viewport does not.
 
 ### Honest note: Kane 0.10.4 replay ignores `--url`
 
