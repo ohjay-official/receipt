@@ -96,9 +96,9 @@ export const BELT = [
     id: "pr1",
     title: "Pull request #1",
     href: PR1.url,
-    lines: ["First live loop", "Checkout charged $29", "Red run 43683895636"],
+    lines: ["First live Kane run", "Seeded checkout was $29", "Red run 43683895636"],
     verdict: "passed" as BeltVerdict,
-    attempts: "receipt-fix: 1",
+    attempts: "1 / 3",
     commit: PR1.fixSha,
     note: "Green run 43684482513",
     links: [
@@ -111,9 +111,9 @@ export const BELT = [
     id: "pr2",
     title: "Pull request #2",
     href: EARLIER.pr2,
-    lines: ["First closed loop", "Fix e7542b0", "Red run 43686930592"],
+    lines: ["Auto-starts on pull_request", "Red run 43686930592", "Fix e7542b0"],
     verdict: "passed" as BeltVerdict,
-    attempts: "receipt-fix: 1",
+    attempts: "1 / 3",
     commit: "e7542b0",
     note: "Green run 43687402846",
     links: [

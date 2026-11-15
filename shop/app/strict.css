@@ -460,13 +460,19 @@
   top: 83.9%;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: calc(111 * var(--u));
   height: calc(44 * var(--u));
+  padding: 0;
   border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.97);
   color: #2d2d2d;
   font-size: calc(14 * var(--u));
+  line-height: 1;
+  text-align: center;
   cursor: pointer;
 }
 @media (max-width: 767px) {
