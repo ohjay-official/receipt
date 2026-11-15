@@ -47,13 +47,23 @@ On a public GitHub repo deployed to Vercel (Deployment Protection off so Kane se
 # .github/workflows/receipt.yml
 name: Receipt
 on:
+  repository_dispatch:
+    types: [vercel.deployment.ready]
   deployment_status:
+  workflow_dispatch:
+    inputs:
+      preview_url:
+        required: false
+        type: string
 permissions:
   contents: read
   pull-requests: write
 jobs:
   receipt:
-    if: github.event.deployment_status.state == 'success'
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'repository_dispatch' && github.event.action == 'vercel.deployment.ready') ||
+      (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -61,7 +71,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.deployment.sha }}
+          ref: ${{ github.event.client_payload.git.sha || github.event.deployment.sha || github.sha }}
           fetch-depth: 0
           token: ${{ secrets.RECEIPT_GIT_TOKEN || github.token }}
       - uses: ohjay-official/receipt@main
@@ -119,6 +129,6 @@ This project is built to stay on **$0**: Kane’s free 10,000-credit grant, GitH
 - `action.yml` / `src/` — the composite Receipt action
 - `shop/` — Next.js fixture (`/pricing` $19, `/checkout` $29)
 - `tests/checkout_test.md` — the Kane contract
-- `.github/workflows/receipt.yml` — `deployment_status` demo workflow
+- `.github/workflows/receipt.yml` — demo workflow (`repository_dispatch` / `deployment_status` / `workflow_dispatch`)
 - `.github/workflows/ci.yml` — unit tests and `next build`
 - `docs/` — brief, spec, plan, research pack

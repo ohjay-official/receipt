@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { readKaneInbox, parseResultMd } from "./lib/inbox.mjs";
 import { findPullRequest, buildCommentBody, upsertComment } from "./lib/github-api.mjs";
 import { redact } from "./lib/github-output.mjs";
+import { resolveDeploymentSha } from "./lib/preview.mjs";
 
 const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
 const testFile = process.env.TEST_FILE || "tests/checkout_test.md";
@@ -31,11 +32,11 @@ function hostedEvidenceUrl() {
 
 async function main() {
   const eventPath = process.env.GITHUB_EVENT_PATH;
-  let sha = process.env.GITHUB_SHA;
+  let event = {};
   if (eventPath && fs.existsSync(eventPath)) {
-    const event = JSON.parse(fs.readFileSync(eventPath, "utf8"));
-    sha = event.deployment?.sha || event.deployment_status?.deployment?.sha || sha;
+    event = JSON.parse(fs.readFileSync(eventPath, "utf8"));
   }
+  const sha = resolveDeploymentSha(event, process.env.GITHUB_SHA);
   const pr = await findPullRequest({ sha, token: process.env.GITHUB_TOKEN }).catch((err) => {
     console.log(redact(err.message));
     return null;

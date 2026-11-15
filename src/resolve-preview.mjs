@@ -12,10 +12,15 @@ if (eventPath && fs.existsSync(eventPath)) {
 }
 
 const fallback = process.env.RECEIPT_PRODUCTION_URL || process.env.PRODUCTION_URL || "";
+if (process.env.RECEIPT_PREVIEW_URL && !event.inputs) {
+  event = { ...event, inputs: { preview_url: process.env.RECEIPT_PREVIEW_URL } };
+} else if (process.env.RECEIPT_PREVIEW_URL && event.inputs && !event.inputs.preview_url) {
+  event = { ...event, inputs: { ...event.inputs, preview_url: process.env.RECEIPT_PREVIEW_URL } };
+}
 const previewUrl = resolvePreviewUrl(event, fallback);
 setOutput("preview_url", previewUrl);
 if (!previewUrl) {
-  console.log("No preview URL on the deployment_status event and no production fallback.");
+  console.log("No preview URL on the Vercel event and no production fallback.");
 } else {
   console.log(`Resolved start URL host: ${safeHost(previewUrl)}`);
 }

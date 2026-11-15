@@ -1,14 +1,66 @@
 /**
- * Preview URL detection for a deployment_status event.
+ * Preview URL and deployment SHA detection for Vercel GitHub events.
+ * Supports deployment_status (legacy), repository_dispatch (current
+ * Vercel-for-GitHub path), and workflow_dispatch.
  */
+
+export function normalizeUrl(url) {
+  const trimmed = String(url || "").trim();
+  if (!trimmed) return "";
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^[a-z0-9.-]+\.[a-z]{2,}(:\d+)?(\/|$)/i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+  return "";
+}
+
+export function isAppUrl(url) {
+  const normalized = normalizeUrl(url);
+  if (!normalized) return false;
+  try {
+    const host = new URL(normalized).hostname.toLowerCase();
+    // Inspector / dashboard / login URLs are not a start URL for Kane.
+    if (host === "vercel.com" || host === "www.vercel.com") return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function firstAppUrl(...candidates) {
+  for (const candidate of candidates) {
+    if (isAppUrl(candidate)) return normalizeUrl(candidate);
+  }
+  return "";
+}
 
 export function resolvePreviewUrl(event, fallbackProductionUrl) {
   const status = event?.deployment_status ?? event?.deploymentStatus ?? {};
-  const url = status.environment_url || status.target_url || "";
-  const trimmed = String(url).trim();
-  if (trimmed) return trimmed;
-  const fallback = String(fallbackProductionUrl || "").trim();
+  const payload = event?.client_payload ?? event?.clientPayload ?? {};
+  const inputs = event?.inputs ?? {};
+  const url = firstAppUrl(
+    payload.url,
+    status.environment_url,
+    status.target_url,
+    inputs.preview_url,
+    inputs.previewUrl,
+    event?.preview_url,
+  );
+  if (url) return url;
+  const fallback = firstAppUrl(fallbackProductionUrl);
   return fallback || "";
+}
+
+export function resolveDeploymentSha(event, fallbackSha) {
+  const payload = event?.client_payload ?? event?.clientPayload ?? {};
+  const sha =
+    payload.git?.sha ||
+    event?.deployment?.sha ||
+    event?.deployment_status?.deployment?.sha ||
+    event?.deploymentStatus?.deployment?.sha ||
+    fallbackSha ||
+    "";
+  return String(sha).trim();
 }
 
 export async function waitForHttpOk(url, opts = {}) {

@@ -8,6 +8,7 @@ import { proposeFix, applyFiles } from "./lib/fixer.mjs";
 import { findPullRequest } from "./lib/github-api.mjs";
 import { DEFAULT_DENYLIST, assertAllowlisted } from "./lib/path-guard.mjs";
 import { redact, setOutput } from "./lib/github-output.mjs";
+import { resolveDeploymentSha } from "./lib/preview.mjs";
 
 const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
 const testFile = process.env.TEST_FILE || "tests/checkout_test.md";
@@ -118,11 +119,11 @@ async function main() {
   git(["commit", "-m", `receipt-fix: ${next}`]);
 
   const eventPath = process.env.GITHUB_EVENT_PATH;
-  let sha = process.env.GITHUB_SHA;
+  let event = {};
   if (eventPath && fs.existsSync(eventPath)) {
-    const event = JSON.parse(fs.readFileSync(eventPath, "utf8"));
-    sha = event.deployment?.sha || sha;
+    event = JSON.parse(fs.readFileSync(eventPath, "utf8"));
   }
+  const sha = resolveDeploymentSha(event, process.env.GITHUB_SHA);
   const pr = await findPullRequest({ sha, token: process.env.GITHUB_TOKEN }).catch(() => null);
   const branch = pr?.head?.ref;
   if (!branch) {

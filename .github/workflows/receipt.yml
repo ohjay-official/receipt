@@ -1,22 +1,44 @@
 # Demo workflow: Kane on the Vercel preview of this repository.
-# The official Kane preview example uses deployment_status and cannot
-# comment on the PR (wrong event). Receipt posts its own comment.
+# Vercel no longer creates GitHub Deployments by default on this project
+# (the deployments API is empty), so deployment_status never fires.
+# Current official path is repository_dispatch (vercel.deployment.ready
+# for previews; success is production and is skipped to save Kane credits).
+# workflow_dispatch is a manual fallback. Receipt posts its own PR comment.
 name: Receipt
 
 on:
   deployment_status:
+  repository_dispatch:
+    types:
+      - vercel.deployment.ready
+      - vercel.deployment.success
+  workflow_dispatch:
+    inputs:
+      preview_url:
+        description: Start URL if this is a manual run (otherwise the Vercel event URL is used)
+        required: false
+        type: string
 
 permissions:
   contents: read
   pull-requests: write
 
 concurrency:
-  group: receipt-${{ github.event.deployment.environment || github.event.deployment.sha || github.sha }}
+  group: receipt-${{ github.event.client_payload.git.ref || github.event.deployment.environment || github.event.deployment.sha || github.sha }}
   cancel-in-progress: true
 
 jobs:
   receipt:
-    if: github.event.deployment_status.state == 'success'
+    if: >
+      (github.event_name == 'deployment_status' &&
+       github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment != 'Production') ||
+      (github.event_name == 'repository_dispatch' &&
+       github.event.action == 'vercel.deployment.ready') ||
+      (github.event_name == 'repository_dispatch' &&
+       github.event.action == 'vercel.deployment.success' &&
+       github.event.client_payload.environment != 'production') ||
+      github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -25,7 +47,7 @@ jobs:
       - name: Checkout the deployment SHA
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.deployment.sha }}
+          ref: ${{ github.event.client_payload.git.sha || github.event.deployment.sha || github.sha }}
           fetch-depth: 0
           token: ${{ secrets.RECEIPT_GIT_TOKEN || github.token }}
 
@@ -39,3 +61,5 @@ jobs:
           username: ${{ secrets.LT_USERNAME }}
           access-key: ${{ secrets.LT_ACCESS_KEY }}
           gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+        env:
+          RECEIPT_PREVIEW_URL: ${{ github.event.inputs.preview_url || github.event.client_payload.url || '' }}
