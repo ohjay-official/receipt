@@ -35,8 +35,7 @@ export function applyCoupon(
   handlingFeeUsd = 0,
 ): number {
   if (normalizeCoupon(code) !== COUPON_CODE) return proPrice;
-  // SEEDED BUG: discount the handling fee, not the Pro membership.
-  return proPrice - handlingFeeUsd * (COUPON_PERCENT / 100);
+  return proPrice - proPrice * (COUPON_PERCENT / 100);
 }
 
 /**
@@ -44,7 +43,7 @@ export function applyCoupon(
  * that covers Pay at max-width: 900px (a 390px phone and Kane's 800px
  * minimum window). Wide desktop viewports are unaffected.
  */
-export const SEED_BLOCK_PAY_ON_MOBILE = true;
+export const SEED_BLOCK_PAY_ON_MOBILE = false;
 
 export function payButtonBlocked(viewportWidth: number): boolean {
   return SEED_BLOCK_PAY_ON_MOBILE && viewportWidth <= NARROW_VIEWPORT_MAX_PX;
