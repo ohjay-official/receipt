@@ -11,8 +11,11 @@ test("pricing page contract is $19", () => {
   assert.equal(formatUsd(PRO_PLAN_USD), "$19");
 });
 
-test("checkout is seeded at $29 — the demo bug Kane must catch", () => {
-  assert.equal(CHECKOUT_PRO_USD, 29);
-  assert.equal(formatUsd(CHECKOUT_PRO_USD), "$29");
-  assert.notEqual(CHECKOUT_PRO_USD, PRO_PLAN_USD);
+test("checkout total must match the published Pro price", () => {
+  assert.equal(
+    CHECKOUT_PRO_USD,
+    PRO_PLAN_USD,
+    `Checkout is $${CHECKOUT_PRO_USD} but /pricing publishes $${PRO_PLAN_USD}. That mismatch is the seeded demo bug Receipt/Kane exist to catch.`,
+  );
+  assert.equal(formatUsd(CHECKOUT_PRO_USD), formatUsd(PRO_PLAN_USD));
 });

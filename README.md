@@ -8,15 +8,21 @@ A drop-in GitHub Action that runs [Kane CLI](https://www.testmuai.com/docs/kane-
 
 ## For Judges (about two minutes)
 
-1. Open the live shop: **TBD-post-build:** `<production URL>`
-2. Open `/pricing`. Pro is **$19**. Open `/checkout`. The total is **$29**. That mismatch is the seeded bug.
-3. Open the demo pull request: **TBD-post-build:** `<PR URL>`
-4. Read the Receipt comment. Kane is red, with evidence of $19 vs $29.
-5. See a later `receipt-fix: 1` commit that touches only `shop/**` (this README is unchanged) and a Receipt comment that has gone green.
+1. Open the live shop: https://receipt-taupe-one.vercel.app
+2. Open `/pricing`. Pro is **$19**. Open `/checkout`. The total is **$29**. That mismatch is the seeded bug (production is still on `main`).
+3. Open the demo pull request: https://github.com/ohjay-official/receipt/pull/1
+4. The Receipt comment is now **green**. The catch is in the red run: Kane failed “Checkout must show $19 for Pro” with a bug verdict that checkout rendered **$29**.
+5. See commit `receipt-fix: 1` (`9492501`). It touches only `shop/**` (this README is unchanged). The later Receipt comment and run are green.
 
-The Action run, the evidence artifact, and `tests/output-checkout/Result.md` are the proof. Do not trust a green badge without the clip.
+Proof (do not trust a green badge without the clip):
 
-**TBD-post-build:** Actions run URL, evidence viewer link, production URL, demo PR URL.
+- Production (bug still present): https://receipt-taupe-one.vercel.app
+- Demo PR: https://github.com/ohjay-official/receipt/pull/1
+- Preview after the fix (`/checkout` is $19): https://receipt-git-demo-t6-first-kane-run-oh-jay-s-projects.vercel.app
+- Red Kane run (the $29 catch): https://github.com/ohjay-official/receipt/actions/runs/43683895636
+- Evidence of that catch: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149438398
+- Green re-verify: https://github.com/ohjay-official/receipt/actions/runs/43684482513
+- Green evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149882316
 
 ---
 
@@ -47,6 +53,8 @@ On a public GitHub repo deployed to Vercel (Deployment Protection off so Kane se
 # .github/workflows/receipt.yml
 name: Receipt
 on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   repository_dispatch:
     types: [vercel.deployment.ready]
   deployment_status:
@@ -61,6 +69,7 @@ permissions:
 jobs:
   receipt:
     if: >
+      github.event_name == 'pull_request' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'repository_dispatch' && github.event.action == 'vercel.deployment.ready') ||
       (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
@@ -71,7 +80,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.client_payload.git.sha || github.event.deployment.sha || github.sha }}
+          ref: ${{ github.event.client_payload.git.sha || github.event.pull_request.head.sha || github.event.deployment.sha || github.sha }}
           fetch-depth: 0
           token: ${{ secrets.RECEIPT_GIT_TOKEN || github.token }}
       - uses: ohjay-official/receipt@main
@@ -112,7 +121,7 @@ npm ci && npm test
 cd shop && npm ci && npm test && npm run build
 ```
 
-CI runs both on every push. The shop tests assert that pricing is $19 and checkout is still seeded at $29 — they document the bug, they do not “fix” it.
+CI runs both on every push. Shop tests assert that `/pricing` is $19 and that checkout matches that published price. On `main` the checkout test is red because checkout is still seeded at $29 — that is the demo bug, not a broken build. After `receipt-fix: 1` on the demo PR, the shop tests go green.
 
 ---
 
@@ -129,6 +138,6 @@ This project is built to stay on **$0**: Kane’s free 10,000-credit grant, GitH
 - `action.yml` / `src/` — the composite Receipt action
 - `shop/` — Next.js fixture (`/pricing` $19, `/checkout` $29)
 - `tests/checkout_test.md` — the Kane contract
-- `.github/workflows/receipt.yml` — demo workflow (`repository_dispatch` / `deployment_status` / `workflow_dispatch`)
+- `.github/workflows/receipt.yml` — demo workflow (`pull_request` / `repository_dispatch` / `deployment_status` / `workflow_dispatch`)
 - `.github/workflows/ci.yml` — unit tests and `next build`
 - `docs/` — brief, spec, plan, research pack

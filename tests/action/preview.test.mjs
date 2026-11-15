@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { resolvePreviewUrl, resolveDeploymentSha, waitForHttpOk } from "../../src/lib/preview.mjs";
+import { resolvePreviewUrl, resolveDeploymentSha, waitForHttpOk, vercelGitBranchUrl, slugifyVercelBranch, waitForVercelCommitStatus } from "../../src/lib/preview.mjs";
 
 test("resolvePreviewUrl prefers environment_url then target_url then fallback", () => {
   assert.equal(
@@ -81,4 +81,51 @@ test("resolveDeploymentSha prefers repository_dispatch git.sha", () => {
     "from-deploy",
   );
   assert.equal(resolveDeploymentSha({}, "fallback"), "fallback");
+});
+
+test("vercelGitBranchUrl builds the known receipt preview alias", () => {
+  assert.equal(slugifyVercelBranch("demo/t6-first-kane-run"), "demo-t6-first-kane-run");
+  assert.equal(
+    vercelGitBranchUrl({
+      project: "receipt",
+      scope: "oh-jay-s-projects",
+      branch: "demo/t6-first-kane-run",
+    }),
+    "https://receipt-git-demo-t6-first-kane-run-oh-jay-s-projects.vercel.app",
+  );
+});
+
+test("resolvePreviewUrl builds a git-branch alias from a pull_request event", () => {
+  assert.equal(
+    resolvePreviewUrl({
+      pull_request: { head: { ref: "demo/t6-first-kane-run", sha: "abc" } },
+      vercelProject: "receipt",
+      vercelScope: "oh-jay-s-projects",
+    }),
+    "https://receipt-git-demo-t6-first-kane-run-oh-jay-s-projects.vercel.app",
+  );
+  assert.equal(
+    resolveDeploymentSha({ pull_request: { head: { sha: "headsha" } } }, "merge"),
+    "headsha",
+  );
+});
+
+test("waitForVercelCommitStatus returns ok on a successful Vercel context", async () => {
+  const result = await waitForVercelCommitStatus({
+    sha: "abc",
+    repo: "ohjay-official/receipt",
+    token: "t",
+    timeoutMs: 20,
+    intervalMs: 5,
+    fetchImpl: async () => ({
+      ok: true,
+      json: async () => ({
+        state: "success",
+        statuses: [
+          { context: "Vercel", state: "success", description: "Deployment has completed" },
+        ],
+      }),
+    }),
+  });
+  assert.equal(result, "ok");
 });
