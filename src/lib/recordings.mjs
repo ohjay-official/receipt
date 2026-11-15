@@ -1,8 +1,9 @@
 /**
  * Replay recordings from Kane 0.10 bake the authoring origin into the
  * first navigate action. --url is only the start URL for a fresh author
- * run; on replay it is ignored. Remap that origin to the preview under
- * test so a committed output-* bundle can be reused across PR aliases.
+ * run; on replay it is ignored. Remap every recorded start/navigate
+ * origin to the preview under test so a committed output-* bundle can
+ * be reused on any new PR alias, not just the branch that authored it.
  */
 
 import fs from "node:fs";
@@ -38,19 +39,10 @@ export function rewriteOrigin(text, fromUrl, toUrl) {
   return out;
 }
 
-export function recordedStartUrl(internalDir) {
-  const executionPath = path.join(internalDir, "execution.json");
-  if (fs.existsSync(executionPath)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(executionPath, "utf8"));
-      if (data?.url) return String(data.url);
-    } catch {
-      // fall through to navigate actions
-    }
-  }
+function actionFiles(internalDir) {
   const stepsDir = path.join(internalDir, "steps");
-  if (!fs.existsSync(stepsDir)) return null;
   const files = [];
+  if (!fs.existsSync(stepsDir)) return files;
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const next = path.join(dir, entry.name);
@@ -60,19 +52,57 @@ export function recordedStartUrl(internalDir) {
   };
   walk(stepsDir);
   files.sort();
-  for (const file of files) {
+  return files;
+}
+
+function addOrigin(set, url) {
+  const parsed = parseOrigin(url);
+  if (parsed) set.add(parsed.origin);
+}
+
+/**
+ * Origins Kane baked into the recording: execution.json url plus every
+ * navigate action. Third-party hosts are ignored at remap time when they
+ * are not vercel.app (or otherwise not collected here).
+ */
+export function collectRecordedOrigins(internalDir) {
+  const found = new Set();
+  const executionPath = path.join(internalDir, "execution.json");
+  if (fs.existsSync(executionPath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(executionPath, "utf8"));
+      addOrigin(found, data?.url);
+    } catch {
+      // ignore malformed execution.json
+    }
+  }
+  for (const file of actionFiles(internalDir)) {
     for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
       if (!line.trim()) continue;
       try {
         const ev = JSON.parse(line);
         const url = ev?.action_params?.url || ev?.action_params?.href;
-        if (ev?.action_type === "navigate" && url) return String(url);
+        if (ev?.action_type === "navigate" && url) addOrigin(found, url);
       } catch {
         // skip
       }
     }
   }
-  return null;
+  return [...found];
+}
+
+export function recordedStartUrl(internalDir) {
+  const origins = collectRecordedOrigins(internalDir);
+  return origins[0] || null;
+}
+
+export function shouldRemapOrigin(recordedOrigin, previewOrigin) {
+  const from = parseOrigin(recordedOrigin);
+  const to = parseOrigin(previewOrigin);
+  if (!from || !to) return false;
+  if (from.origin === to.origin) return false;
+  if (/\.vercel\.app$/i.test(from.host)) return true;
+  return from.host !== to.host;
 }
 
 function listFiles(dir) {
@@ -107,18 +137,29 @@ export function remapRecordedStartUrl(outputDir, previewUrl) {
   if (!fs.existsSync(internalDir)) {
     return { remapped: false, reason: "no-recordings", files: 0 };
   }
-  const recorded = recordedStartUrl(internalDir);
-  const from = parseOrigin(recorded);
-  if (!from) {
-    return { remapped: false, reason: "no-recorded-origin", files: 0 };
-  }
-  if (from.origin === preview.origin) {
-    return { remapped: false, reason: "already-current", files: 0, from: from.origin, to: preview.origin };
+  const recordedOrigins = collectRecordedOrigins(internalDir).filter((origin) =>
+    shouldRemapOrigin(origin, preview.origin),
+  );
+  if (recordedOrigins.length === 0) {
+    const already = collectRecordedOrigins(internalDir);
+    if (already.length === 0) {
+      return { remapped: false, reason: "no-recorded-origin", files: 0 };
+    }
+    return {
+      remapped: false,
+      reason: "already-current",
+      files: 0,
+      from: already[0],
+      to: preview.origin,
+    };
   }
   let files = 0;
   for (const file of listFiles(internalDir)) {
     const original = fs.readFileSync(file, "utf8");
-    const next = rewriteOrigin(original, from.origin, preview.origin);
+    let next = original;
+    for (const origin of recordedOrigins) {
+      next = rewriteOrigin(next, origin, preview.origin);
+    }
     if (next !== original) {
       fs.writeFileSync(file, next);
       files += 1;
@@ -128,7 +169,7 @@ export function remapRecordedStartUrl(outputDir, previewUrl) {
     remapped: files > 0,
     reason: files > 0 ? "rewrote-origin" : "no-matches",
     files,
-    from: from.origin,
+    from: recordedOrigins.join(", "),
     to: preview.origin,
   };
 }
