@@ -100,17 +100,23 @@ export function classifyKaneExit(args = {}) {
   const ndjson = args.ndjson ?? "";
   const officialStatus = args.officialStatus;
 
-  if (processExit === 0) return "pass";
+  // Kane 0.10+ exits 0 when a _test.md has no H2 steps. That is not a verified pass.
+  if (/no steps/i.test(stderrLog)) return "setup";
+
+  const parsed = resultMd ? parseResultMd(resultMd) : null;
+  const terminal = parseNdjsonOneLiner(ndjson);
+  const hasPassedEvidence =
+    (parsed?.status === "passed" && parsed.failedSteps.length === 0) ||
+    (terminal?.sawTerminal && /\bpassed\b/i.test(terminal.oneLiner || "") && parsed?.failedSteps.length === 0);
+
   if (processExit === 2) return "setup";
   if (processExit === 3) return "timeout";
   if (processExit === 1) return "fail";
-  if (officialStatus === "passed") return "pass";
-
-  const parsed = resultMd ? parseResultMd(resultMd) : null;
-  if (parsed?.status === "passed" && parsed.failedSteps.length === 0) return "pass";
   if (parsed?.status === "failed" || (parsed && parsed.failedSteps.length > 0)) return "fail";
+  if (processExit === 0) return hasPassedEvidence ? "pass" : "setup";
+  if (officialStatus === "passed") return hasPassedEvidence ? "pass" : "setup";
+  if (hasPassedEvidence) return "pass";
 
-  const terminal = parseNdjsonOneLiner(ndjson);
   if (/timed?\s*out|timeout|cancelled/i.test(stderrLog) && !parsed) return "timeout";
   if (officialStatus === "failed" && parsed?.failedSteps.length) return "fail";
   if (!parsed && !terminal?.sawTerminal) return "setup";

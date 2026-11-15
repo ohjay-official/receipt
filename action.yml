@@ -115,7 +115,9 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        npm install -g @testmuai/kane-cli
+        # npm 11+ blocks package install scripts unless allow-scripts is set.
+        # Kane's platform packages chmod their runner binaries in postinstall.
+        npm install -g --allow-scripts=@testmuai/kane-cli-assurance-linux-x64,@testmuai/kane-cli-linux-x64,@testmuai/kane-cli-node-linux-x64,sharp @testmuai/kane-cli
         kane-cli --version
 
     - name: Run Kane
@@ -153,6 +155,11 @@ runs:
           2> kane-out/stderr.log
         rc=$?
         set -e
+        # Kane 0.10+ exits 0 when the file has no H2 steps. That is not a verified run.
+        if [ -f kane-out/stderr.log ] && grep -qiE 'no steps' kane-out/stderr.log; then
+          echo "::error::Kane found no steps in $TEST_FILE (need ## H2 headings). Treating this as setup exit 2, not a pass."
+          rc=2
+        fi
         # Do not cat credentials. stderr is archived; print a short non-secret tail.
         echo "kane_exit=$rc" >> "$GITHUB_OUTPUT"
         echo "Kane exited $rc"
