@@ -185,7 +185,7 @@ runs:
         set -euo pipefail
         node "$RECEIPT_ACTION_PATH/src/classify-exit.mjs"
 
-    - name: Upload evidence and Result.md
+    - name: Upload evidence, Result.md, and replay recordings
       id: evidence
       if: always()
       uses: actions/upload-artifact@v4
@@ -196,7 +196,7 @@ runs:
         retention-days: 30
         path: |
           .testmuai/evidence/
-          tests/output-*/Result.md
+          tests/output-*/
           kane-out/
 
     - name: Comment on the pull request
