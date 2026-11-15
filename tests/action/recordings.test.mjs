@@ -8,8 +8,10 @@ import {
   outputDirFromTestFile,
   parseOrigin,
   recordedStartUrl,
+  collectRecordedOrigins,
   remapRecordedStartUrl,
   rewriteOrigin,
+  shouldRemapOrigin,
 } from "../../src/lib/recordings.mjs";
 
 test("outputDirFromTestFile maps checkout_test.md", () => {
@@ -81,4 +83,52 @@ test("discardStaleResultMd removes Result.md but leaves recordings", () => {
   assert.equal(discardStaleResultMd(dir), path.join(dir, "Result.md"));
   assert.equal(fs.existsSync(path.join(dir, "Result.md")), false);
   assert.ok(fs.existsSync(path.join(dir, ".internal", "execution.json")));
+});
+
+test("remapRecordedStartUrl works for a third PR alias, not just PR #2", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "receipt-recordings-"));
+  const oldUrl = "https://receipt-git-demo-t6-first-kane-run-oh-jay-s-projects.vercel.app";
+  const newUrl = "https://receipt-git-feature-foo-oh-jay-s-projects.vercel.app";
+  writeFixture(dir, oldUrl);
+  const result = remapRecordedStartUrl(dir, newUrl);
+  assert.equal(result.remapped, true);
+  const execution = JSON.parse(fs.readFileSync(path.join(dir, ".internal", "execution.json"), "utf8"));
+  assert.equal(execution.url, newUrl);
+});
+
+test("remapRecordedStartUrl rewrites leftover unique aliases and leaves LambdaTest alone", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "receipt-recordings-"));
+  const authored = "https://receipt-git-demo-t6-first-kane-run-oh-jay-s-projects.vercel.app";
+  const leftover = "https://receipt-c91pjng50-oh-jay-s-projects.vercel.app";
+  const preview = "https://receipt-git-pr-3-oh-jay-s-projects.vercel.app";
+  const lt = "https://kaneai-playground.lambdatest.io/";
+  const { internal } = writeFixture(dir, authored);
+  const extraDir = path.join(internal, "steps", "2-bbbb", "flows", "0");
+  fs.mkdirSync(extraDir, { recursive: true });
+  fs.writeFileSync(
+    path.join(extraDir, "actions.ndjson"),
+    JSON.stringify({
+      action_type: "navigate",
+      action_instruction: `Navigate to ${leftover}`,
+      action_params: { url: leftover },
+    }) +
+      "\n" +
+      JSON.stringify({
+        action_type: "screenshot",
+        action_instruction: "capture",
+        action_params: { url: lt },
+      }) +
+      "\n",
+  );
+  const before = collectRecordedOrigins(internal);
+  assert.equal(before.includes(authored), true);
+  assert.equal(before.includes(leftover), true);
+  assert.equal(shouldRemapOrigin(authored, preview), true);
+  const result = remapRecordedStartUrl(dir, preview);
+  assert.equal(result.remapped, true);
+  const text = fs.readFileSync(path.join(extraDir, "actions.ndjson"), "utf8");
+  assert.equal(text.includes("demo-t6-first-kane-run"), false);
+  assert.equal(text.includes("receipt-c91pjng50-"), false);
+  assert.equal(text.includes("kaneai-playground.lambdatest.io"), true);
+  assert.equal(text.includes("receipt-git-pr-3-oh-jay-s-projects.vercel.app"), true);
 });

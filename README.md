@@ -48,6 +48,12 @@ Time: under one minute on the live site, plus the PR comment if you are checking
 
 The first Kane run on a PR that still has the seeded $29 checkout is expected to be **red**. After a successful fixer commit, the same test should replay **green**.
 
+### Honest note: Kane 0.10.4 replay ignores `--url`
+
+`kane-cli testmd run --url` sets the start URL for a **fresh author** run. On **replay**, Kane 0.10.4 ignores `--url` and navigates to the origin baked into `tests/output-checkout/.internal` — the preview that was live when the recording was authored. We found this on pull request #2: replay opened the already-fixed demo alias and false-greened a branch whose checkout was still $29.
+
+Receipt works around it on **every** run, for any new PR, not just #2: before Kane starts, the action rewrites every recorded Vercel start/navigate origin to the preview under test, and discards a stale committed `Result.md` so a previous pass cannot classify this run.
+
 ---
 
 ## Install tonight
@@ -107,7 +113,7 @@ The Kane command the action runs:
 kane-cli testmd run tests/checkout_test.md   --agent --headless --timeout 300 --max-steps 40   --url "$PREVIEW_URL"   --name receipt-checkout   --username "$LT_USERNAME" --access-key "$LT_ACCESS_KEY"
 ```
 
-`--url` overrides the test file’s frontmatter start URL so each Vercel preview can be checked without rewriting the contract. Unchanged steps replay from `tests/output-checkout/` once that folder is committed after the first authored run.
+`--url` is the start URL for a fresh author run. Unchanged steps replay from the committed `tests/output-checkout/` recordings. Because Kane 0.10.4 replay ignores `--url` (see the honest note above), Receipt remaps those recordings onto the current preview before each run.
 
 ---
 
@@ -137,7 +143,7 @@ CI runs both on every push. Shop tests assert that `/pricing` is $19 and that ch
 
 GitHub Actions secrets only, never in logs or in this repo: `LT_USERNAME`, `LT_ACCESS_KEY`, `GEMINI_API_KEY`, `RECEIPT_GIT_TOKEN`.
 
-This project is built to stay on **$0**: Kane’s free 10,000-credit grant, GitHub Actions on a public repo, Vercel Hobby, Gemini free Flash (`gemini-3.8-flash`, backoff on 429, one retry on `gemini-3.5-flash-lite`). There is no paid OpenAI fallback. Do not add a billing account to “be safe.”
+This project is built to stay on **$0**: Kane’s free 10,000-credit grant, GitHub Actions on a public repo, Vercel Hobby, Gemini free Flash (`gemini-3.8-flash`, backoff on 429, 5xx, and transient `fetch failed`, then `gemini-3.5-flash-lite`). There is no paid OpenAI fallback. Do not add a billing account to “be safe.”
 
 ---
 
