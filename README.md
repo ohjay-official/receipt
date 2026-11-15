@@ -33,7 +33,7 @@ Proof (do not trust a green badge without the clip):
 - Auto-trigger green re-verify (fixer push, no manual dispatch): https://github.com/ohjay-official/receipt/actions/runs/43687402846
 - Green evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14150359940
 
-CI: on the demo PR, Action unit tests, Shop build, and Shop price contract are all green. On `main` (and on the proof PR, which still has the seeded bug), Shop price contract stays red on purpose: checkout is $29, and the unit test asserts checkout equals the $19 pricing source of truth.
+CI: Action unit tests and Shop build stay green. On `main`, the Shop contracts job stays red on purpose: checkout is $29, coupon LAUNCH10 does not take 10% off $19, Pay is blocked at 390px, and the unit tests assert the correct contracts. After a successful `receipt-fix` on a demo PR, those shop tests go green on that branch only. Production on `main` keeps the seeded bugs.
 
 ---
 
@@ -44,12 +44,18 @@ CI: on the demo PR, Action unit tests, Shop build, and Shop price contract are a
 1. Open the preview (or live) site’s `/pricing` page and confirm the Pro plan is **$19**.
 2. Choose Pro and continue to checkout (`/checkout`).
 3. Checkout must show **$19** for Pro, not any other amount.
+4. Enter coupon code **LAUNCH10** and apply it. The Pro total must become **$17.10** (10% off $19), not stay the same, show NaN, or any other amount.
+5. Narrow the viewport to **390px** (a typical phone). Click **Pay**. A confirmation such as “Payment accepted” must appear. Fail if Pay does nothing, is covered, or cannot be clicked at this width.
 
 <!-- /kane:how-to-test -->
 
 Time: under one minute on the live site, plus the PR comment if you are checking the loop.
 
-The first Kane run on a PR that still has the seeded $29 checkout is expected to be **red**. After a successful fixer commit, the same test should replay **green**.
+The first Kane run on a PR that still has the seeded bugs (checkout **$29**, coupon **LAUNCH10** applied wrong, Pay covered at **390px**) is expected to be **red**. After a successful fixer commit, the same test should replay **green**.
+
+### Honest note: Kane 0.10.4 has no 390px viewport setting
+
+Official testmd frontmatter has no viewport or device-width key. `kane-cli config set-window` rejects widths under 800px. Kane “mobile” targets (`emulator`, `simulator`, `android`, `ios`) are native apps, not a Chrome phone viewport, and `--remote` is out of scope on a $0 budget. Step 5 therefore tells Kane to narrow the page viewport itself to 390px. The seeded Pay overlay is a CSS `@media (max-width: 390px)` rule, so a successful viewport resize will still hit the bug.
 
 ### Honest note: Kane 0.10.4 replay ignores `--url`
 
@@ -138,7 +144,7 @@ npm ci && npm test
 cd shop && npm ci && npm test && npm run build
 ```
 
-CI runs both on every push. Shop tests assert that `/pricing` is $19 and that checkout matches that published price. On `main` the checkout test is red because checkout is still seeded at $29 — that is the demo bug, not a broken build. After `receipt-fix: 1` on the demo PR, the shop tests go green.
+CI runs both on every push. Shop tests assert that `/pricing` is $19, that checkout matches that published price, that coupon LAUNCH10 yields $17.10, and that Pay is clickable at 390px. On `main` those contract tests are red because the three seeded bugs are still present — that is the demo, not a broken build. After a successful `receipt-fix` on a demo PR, the shop tests go green on that branch only.
 
 ---
 

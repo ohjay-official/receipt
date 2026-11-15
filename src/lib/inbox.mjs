@@ -25,6 +25,7 @@ export function parseResultMd(text) {
     duration_s: null,
     failedSteps: [],
     passedSteps: [],
+    steps: [],
   };
   const fm = text.match(/^---\n([\s\S]*?)\n---/);
   if (fm) {
@@ -53,6 +54,7 @@ export function parseResultMd(text) {
       status: match[3],
       detail: [meta, body].filter(Boolean).join("\n"),
     };
+    result.steps.push(step);
     if (step.status === "failed") result.failedSteps.push(step);
     if (step.status === "passed") result.passedSteps.push(step);
   }

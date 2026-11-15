@@ -47,36 +47,84 @@ export async function findPullRequest({ sha, token } = {}) {
 
 const MARKER = "<!-- receipt-comment -->";
 
+export function rootCauseFromSteps(steps = [], excerpt = "") {
+  const failed = (steps || []).filter((s) => s.status === "failed");
+  if (failed.length) {
+    const first = failed[0];
+    const detail = String(first.detail || "").split(/\n/).filter(Boolean)[0] || "";
+    const extra =
+      failed.length > 1
+        ? ` (+${failed.length - 1} more failed step${failed.length > 2 ? "s" : ""})`
+        : "";
+    return [`${first.heading}${extra}`, detail].filter(Boolean).join(" — ").slice(0, 400);
+  }
+  const line = String(excerpt || "")
+    .split(/\n/)
+    .map((s) => s.trim())
+    .find(Boolean);
+  return line ? line.slice(0, 400) : "";
+}
+
 export function buildCommentBody(fields) {
   const status = fields.status === "passed" || fields.exitClass === "pass" ? "passed" : "failed";
   const icon = status === "passed" ? "passed" : "failed";
+  const fixerNote = String(fields.fixerNote || "").trim();
+  const refused = /receipt refused fix/i.test(fixerNote);
   const lines = [
     MARKER,
     `## Receipt: ${icon}`,
     "",
     fields.summary ? `> ${fields.summary}` : "> Kane ran on the preview against the How-to-test contract.",
     "",
-    `- Start URL: ${fields.previewUrl || "(unknown)"}`,
-    `- Kane exit class: \`${fields.exitClass || "unknown"}\`${fields.kaneExit != null && fields.kaneExit !== "" ? ` (code ${fields.kaneExit})` : ""}`,
-    `- Fixer attempts already on this branch: ${fields.attempts ?? 0} / ${fields.maxFixes ?? 3}`,
+    "| | |",
+    "| --- | --- |",
+    `| Start URL | ${fields.previewUrl || "(unknown)"} |`,
+    `| Kane | \`${fields.exitClass || "unknown"}\`${fields.kaneExit != null && fields.kaneExit !== "" ? ` (code ${fields.kaneExit})` : ""} |`,
+    `| Attempts | ${fields.attempts ?? 0} / ${fields.maxFixes ?? 3} |`,
   ];
+  if (fields.evidenceUrl) {
+    lines.push(
+      `| Evidence | [Open the evidence pack](${fields.evidenceUrl}) (artifact \`${fields.evidenceArtifactName || "receipt-evidence"}\`, 30 days) |`,
+    );
+  } else if (fields.evidenceHint) {
+    lines.push(`| Evidence | artifact \`${fields.evidenceHint}\` on this Actions run, kept 30 days |`);
+  }
   if (fields.usedFallback) {
-    lines.push("- Note: the preview was not ready; Kane used the production fallback URL.");
+    lines.push("| Note | The preview was not ready; Kane used the production fallback URL. |");
+  }
+  const steps = Array.isArray(fields.steps) ? fields.steps : [];
+  if (steps.length) {
+    lines.push("", "### What Kane saw");
+    for (const step of steps) {
+      const mark =
+        step.status === "passed" ? "passed" : step.status === "skipped" ? "skipped" : "failed";
+      lines.push(`- **${mark}** — ${step.heading}`);
+    }
+  }
+  const cause = fields.rootCause || rootCauseFromSteps(steps, fields.excerpt);
+  if (cause && status !== "passed") {
+    lines.push("", "### Root cause", "", cause);
+  }
+  if (fixerNote) {
+    lines.push("", refused ? "### Fix refused" : "### Fix", "", fixerNote);
+    if (fields.fixerFiles) {
+      lines.push("", `Files changed: \`${fields.fixerFiles}\``);
+    }
+  } else if (fields.fixerFiles) {
+    lines.push("", "### Fix", "", `Files changed: \`${fields.fixerFiles}\``);
   }
   if (fields.evidenceUrl) {
-    lines.push(`- Evidence: [Open the evidence pack](${fields.evidenceUrl}) (artifact \`${fields.evidenceArtifactName || "receipt-evidence"}\`, kept 30 days).`);
-  } else if (fields.evidenceHint) {
-    lines.push(`- Evidence artifact: \`${fields.evidenceHint}\` (and \`tests/output-*/Result.md\`) on this Actions run, kept 30 days.`);
+    lines.push(
+      "",
+      "Screenshots, if Kane captured any, live in the evidence pack. Kane does not publish stable per-image URLs.",
+    );
   }
-  if (fields.fixerNote) {
-    lines.push(`- Fixer: ${fields.fixerNote}`);
-  }
-  if (fields.excerpt) {
+  if (!steps.length && fields.excerpt) {
     lines.push("", "### Result.md excerpt", "", "```markdown", fields.excerpt.trim(), "```");
   }
   lines.push(
     "",
-    "The README How-to-test block is the contract. A fixer may only edit `shop/**`.",
+    "The README How-to-test block is the contract. A fixer may only edit `shop/**` application source — not tests, the contract, or workflows.",
     "",
     "_Verified in a real browser by Kane CLI. Do not merge a preview without a Receipt._",
   );

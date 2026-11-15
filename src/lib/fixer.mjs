@@ -28,6 +28,7 @@ export function collectAllowlistedSource(workspace, allowlist = DEFAULT_ALLOWLIS
         continue;
       }
       if (/\.(png|jpe?g|gif|webp|ico|pdf|woff2?)$/i.test(entry.name)) continue;
+      if (/\.test\.[cm]?[jt]sx?$/i.test(entry.name) || /_test\.md$/i.test(entry.name)) continue;
       if (fs.statSync(full).size > 80_000) continue;
       files[rel] = fs.readFileSync(full, "utf8");
     }
@@ -41,8 +42,11 @@ export function buildFixerPrompt({ claim, resultMd, oneLiner, sources }) {
     .join("\n\n");
   return [
     "You are fixing a Next.js fixture shop so that a Kane CLI test will pass.",
-    "The README How-to-test contract is the source of truth. You must NOT change the contract, the Kane test, or any workflow.",
-    "Edit application source only so checkout shows the same Pro price as the pricing page.",
+    "The README How-to-test contract is the source of truth. You must NOT change the contract, the Kane test, unit tests, or any workflow.",
+    "Fix every seeded shop bug that violates the contract, even if Kane only failed the first check:",
+    "1) Checkout Pro price must match /pricing ($19), not $29.",
+    "2) Coupon LAUNCH10 must take 10% off that $19 Pro price so the total becomes $17.10 — not apply to the wrong line, yield NaN, or leave the total unchanged.",
+    "3) The Pay button must be clickable at a 390px mobile viewport and show a Payment accepted confirmation. Remove any overlay that covers Pay at that width. Do not change the advertised Pro price (PRO_PLAN_USD stays 19).",
     "",
     "How-to-test claim:",
     claim || "(missing)",
@@ -68,6 +72,10 @@ export async function proposeFix(input) {
   const workspace = input.workspace || process.cwd();
   if (!input.resultMd || !String(input.resultMd).trim()) {
     throw new Error("refusing to fix: Result.md is empty. The fixer must read Kane's result.");
+  }
+  if (input.demoCheat) {
+    const { proposeCheatFix } = await import("./guardrail.mjs");
+    return { ...proposeCheatFix(), demoCheat: true };
   }
   const sources = input.sources || collectAllowlistedSource(workspace, allowlist, denylist);
   const prompt = buildFixerPrompt({

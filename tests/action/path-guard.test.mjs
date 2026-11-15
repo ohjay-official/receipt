@@ -53,3 +53,9 @@ test("assertAllowlisted accepts a clean shop-only patch", () => {
     assertAllowlisted(["shop/lib/prices.ts", "shop/app/checkout/page.tsx"]),
   );
 });
+
+test("rejects shop unit tests even though they sit under shop/**", () => {
+  assert.equal(isAllowlisted("shop/lib/prices.test.ts"), false);
+  assert.equal(isAllowlisted("shop/lib/checkout.test.ts"), false);
+  assert.throws(() => assertAllowlisted(["shop/lib/prices.test.ts"]), /rejected/);
+});

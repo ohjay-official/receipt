@@ -37,7 +37,7 @@ jobs:
       - run: npm run build
 
   shop-price:
-    name: Shop price contract
+    name: Shop contracts
     runs-on: ubuntu-latest
     defaults:
       run:

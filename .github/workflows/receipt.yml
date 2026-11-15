@@ -74,3 +74,4 @@ jobs:
           RECEIPT_VERCEL_PROJECT: receipt
           RECEIPT_VERCEL_SCOPE: oh-jay-s-projects
           RECEIPT_WAIT_FOR_VERCEL_STATUS: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+          RECEIPT_DEMO_CHEAT: ${{ (github.head_ref == 'demo/cheat-refusal' || github.event.pull_request.head.ref == 'demo/cheat-refusal') && '1' || '0' }}

@@ -210,6 +210,26 @@ runs:
           tests/output-*/
           kane-out/
 
+    - name: Fixer (allowlisted shop source only)
+      id: fixer
+      if: always() && steps.classify.outputs.exit_class == 'fail'
+      shell: bash
+      env:
+        RECEIPT_ACTION_PATH: ${{ github.action_path }}
+        GEMINI_API_KEY: ${{ inputs.gemini-api-key }}
+        RECEIPT_GIT_TOKEN: ${{ env.RECEIPT_GIT_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
+        TEST_FILE: ${{ inputs.test-file }}
+        ALLOWLIST: ${{ inputs.allowlist }}
+        MAX_FIXES: ${{ inputs.max-fixes }}
+        ATTEMPTS: ${{ steps.attempts.outputs.attempts }}
+        EXIT_CLASS: ${{ steps.classify.outputs.exit_class }}
+        RECEIPT_DEMO_CHEAT: ${{ env.RECEIPT_DEMO_CHEAT }}
+        GITHUB_HEAD_REF: ${{ github.head_ref }}
+      run: |
+        set -euo pipefail
+        node "$RECEIPT_ACTION_PATH/src/fixer.mjs"
+
     - name: Comment on the pull request
       id: comment
       if: always()
@@ -227,27 +247,12 @@ runs:
         USED_FALLBACK: ${{ steps.wait.outputs.used_fallback }}
         EVIDENCE_ARTIFACT_ID: ${{ steps.evidence.outputs.artifact-id }}
         EVIDENCE_ARTIFACT_NAME: receipt-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+        FIXER_NOTE: ${{ steps.fixer.outputs.fixer_note }}
+        FIXER_FILES: ${{ steps.fixer.outputs.fixer_files }}
+        FIXER_STATUS: ${{ steps.fixer.outputs.fixer_status }}
       run: |
         set -euo pipefail
         node "$RECEIPT_ACTION_PATH/src/comment.mjs"
-
-    - name: Fixer (allowlisted shop source only)
-      id: fixer
-      if: always() && steps.classify.outputs.exit_class == 'fail'
-      shell: bash
-      env:
-        RECEIPT_ACTION_PATH: ${{ github.action_path }}
-        GEMINI_API_KEY: ${{ inputs.gemini-api-key }}
-        RECEIPT_GIT_TOKEN: ${{ env.RECEIPT_GIT_TOKEN }}
-        GITHUB_TOKEN: ${{ github.token }}
-        TEST_FILE: ${{ inputs.test-file }}
-        ALLOWLIST: ${{ inputs.allowlist }}
-        MAX_FIXES: ${{ inputs.max-fixes }}
-        ATTEMPTS: ${{ steps.attempts.outputs.attempts }}
-        EXIT_CLASS: ${{ steps.classify.outputs.exit_class }}
-      run: |
-        set -euo pipefail
-        node "$RECEIPT_ACTION_PATH/src/fixer.mjs"
 
     - name: Fail the check if Kane was not green
       if: always()

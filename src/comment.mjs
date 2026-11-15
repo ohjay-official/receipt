@@ -61,6 +61,8 @@ async function main() {
       inbox.oneLiner ||
       (inbox.parsed?.status ? `Kane ${inbox.parsed.status}` : `Kane ${process.env.EXIT_CLASS || "finished"}`),
     fixerNote: process.env.FIXER_NOTE || "",
+    fixerFiles: process.env.FIXER_FILES || "",
+    steps: inbox.parsed?.steps || [],
   });
   const action = await upsertComment({
     issueNumber: pr.number,

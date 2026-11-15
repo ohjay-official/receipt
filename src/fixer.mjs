@@ -7,6 +7,7 @@ import { countFixAttempts, capReached } from "./lib/attempts.mjs";
 import { readKaneInbox, extractHowToTest } from "./lib/inbox.mjs";
 import { proposeFix, applyFiles } from "./lib/fixer.mjs";
 import { findPullRequest } from "./lib/github-api.mjs";
+import { isDemoCheatEnabled, validateFixProposal } from "./lib/guardrail.mjs";
 import { DEFAULT_DENYLIST, assertAllowlisted } from "./lib/path-guard.mjs";
 import { redact, setOutput } from "./lib/github-output.mjs";
 import { resolveDeploymentSha } from "./lib/preview.mjs";
@@ -18,6 +19,12 @@ const allowlist = (process.env.ALLOWLIST || "shop/**")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
+
+function refusalNote(err) {
+  const raw = redact(err && err.message ? err.message : "Receipt refused fix");
+  if (raw.startsWith("Receipt refused fix:")) return raw;
+  return `Receipt refused fix: ${raw}`;
+}
 
 function git(args, opts = {}) {
   try {
@@ -81,18 +88,30 @@ async function main() {
       workspace,
       allowlist,
       apiKey: process.env.GEMINI_API_KEY,
+      demoCheat: isDemoCheatEnabled(process.env),
     });
+    if (proposal.demoCheat) {
+      console.log("RECEIPT_DEMO_CHEAT is on: proposing a cheating diff for the refusal demo.");
+    }
   } catch (err) {
     console.log(`Fixer Gemini failed after retries: ${redact(err.message || String(err))}`);
     setOutput("fixer_status", "gemini-failed");
     return;
   }
 
+  const existing = {};
+  for (const rel of Object.keys(proposal.files)) {
+    const full = path.join(workspace, rel);
+    if (fs.existsSync(full)) existing[rel] = fs.readFileSync(full, "utf8");
+  }
   try {
+    validateFixProposal({ files: proposal.files, existing, allowlist });
     assertAllowlisted(Object.keys(proposal.files), allowlist, DEFAULT_DENYLIST);
   } catch (err) {
-    console.log(redact(err.message));
-    setOutput("fixer_status", "path-guard");
+    const note = refusalNote(err);
+    console.log(note);
+    setOutput("fixer_status", "refused");
+    setOutput("fixer_note", note);
     return;
   }
 
@@ -102,11 +121,21 @@ async function main() {
   git(["add", "--", ...Object.keys(proposal.files)]);
   const staged = git(["diff", "--cached", "--name-only"]).trim().split(/\n/).filter(Boolean);
   try {
+    const stagedFiles = {};
+    const stagedExisting = {};
+    for (const rel of staged) {
+      stagedFiles[rel] = fs.existsSync(path.join(workspace, rel))
+        ? fs.readFileSync(path.join(workspace, rel), "utf8")
+        : "";
+    }
+    validateFixProposal({ files: stagedFiles, existing: stagedExisting, allowlist });
     assertAllowlisted(staged, allowlist, DEFAULT_DENYLIST);
   } catch (err) {
     git(["reset", "--hard", "HEAD"]);
-    console.log(redact(err.message));
-    setOutput("fixer_status", "path-guard");
+    const note = refusalNote(err);
+    console.log(note);
+    setOutput("fixer_status", "refused");
+    setOutput("fixer_note", note);
     return;
   }
   if (staged.length === 0) {
@@ -158,9 +187,12 @@ async function main() {
     setOutput("fixer_status", "push-failed");
     return;
   }
+  const filesList = staged.join(", ");
   console.log(`Pushed receipt-fix: ${next} to ${branch} (allowlisted paths only).`);
   setOutput("fixer_status", "pushed");
   setOutput("fixer_commit", `receipt-fix: ${next}`);
+  setOutput("fixer_files", filesList);
+  setOutput("fixer_note", `pushed receipt-fix: ${next} (${filesList})`);
 }
 
 await main();
