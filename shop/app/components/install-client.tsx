@@ -46,15 +46,21 @@ export default function InstallClient() {
   const [copied, setCopied] = useState(false);
   return (
     <div className="rx-install-grid">
-      <div>
+      <div className="rx-install-steps">
         <p className="rx-kicker">Install</p>
-        <h2 id="install-title">Tear off the setup</h2>
+        <h2 id="install-title">Print the setup</h2>
         <p className="rx-lead">
           Public repo, Vercel, Deployment Protection off so Kane sees the app. Copy the test file and the How-to-test block, then the workflow. The secrets stay in GitHub.
         </p>
-        <p className="rx-lead"><Link href="/docs/install">Full install notes</Link></p>
+        <ol>
+          <li><Link href="/docs/install">Secrets stay in GitHub</Link></li>
+          <li><Link href="/docs/contract">The How-to-test file</Link></li>
+          <li><Link href="/docs/configuration">The workflow on the preview</Link></li>
+        </ol>
       </div>
-      <div className={torn ? "rx-slip is-torn" : "rx-slip"}>
+      <div className="rx-printer">
+        <div className="rx-printer-head" aria-hidden="true" />
+        <div className={torn ? "rx-slip is-torn is-printing" : "rx-slip is-printing"}>
         <button type="button" className="rx-tear" aria-pressed={torn} onClick={() => setTorn((v) => !v)}>
           {torn ? "Torn" : "Tear off"}
         </button>
@@ -84,10 +90,11 @@ export default function InstallClient() {
             </button>
           </div>
           <div className="rx-total"><span>Total</span><span>$0</span></div>
-          <p className="rx-lead" style={{ fontSize: 13 }}>
+          <p className="rx-lead">
             Public repo, Vercel Hobby, Kane&apos;s free grant, Gemini free Flash. @main is not pinned to a release tag. This install has not been verified on a second repo.
           </p>
         </div>
+      </div>
       </div>
     </div>
   );

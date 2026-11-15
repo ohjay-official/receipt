@@ -11,10 +11,10 @@ export default function NotFound() {
           /pricing and /checkout.
         </p>
         <div className="actions">
-          <Link className="btn" href="/">
+          <Link className="rx-pill rx-pill-ink" href="/">
             Back to Receipt
           </Link>
-          <Link className="btn btn-secondary" href="/shop">
+          <Link className="rx-pill rx-pill-ghost" href="/shop">
             Open the demo shop
           </Link>
         </div>

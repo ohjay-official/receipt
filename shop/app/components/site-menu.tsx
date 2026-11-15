@@ -4,17 +4,18 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { DOC_NAV, NAV, REPO_URL } from "@/lib/site";
+import { DOC_NAV, HACKATHON_URL, NAV, REPO_URL } from "@/lib/site";
 
-type Item = { label: string; href: string; children?: Item[] };
+type Item = { label: string; href: string; blurb?: string; children?: Item[] };
 
 const TREE: Item[] = [
-  { label: "Home", href: "/" },
-  { label: "How it works", href: "/how-it-works" },
-  { label: "Proof", href: "/proof" },
+  { label: "Home", href: "/", blurb: "The jet, the loop, the receipt" },
+  { label: "How it works", href: "/how-it-works", blurb: "Catch, fix, re-verify" },
+  { label: "Proof", href: "/proof", blurb: "Five real pull requests" },
   {
     label: "Demo shop",
     href: "/shop",
+    blurb: "The seeded store Kane reads",
     children: [
       { label: "Pricing", href: "/shop/pricing" },
       { label: "Cart", href: "/shop/cart" },
@@ -24,10 +25,9 @@ const TREE: Item[] = [
   {
     label: "Docs",
     href: "/docs",
+    blurb: "Install, contract, guardrails",
     children: DOC_NAV.map((item) => ({ label: item.label, href: item.href })),
   },
-  { label: "Install", href: "/docs/install" },
-  { label: "GitHub", href: REPO_URL },
 ];
 
 function isCurrent(pathname: string, href: string, exact = false) {
@@ -120,25 +120,48 @@ export default function SiteMenu({ overlay = false }: { overlay?: boolean }) {
       aria-labelledby={titleId}
     >
       <div className="rx-menu-panel-bar">
-        <p id={titleId}>Menu</p>
-        <button type="button" data-menu-close className="rx-menu-close" onClick={() => setOpen(false)}>
-          Close
-        </button>
+        <Link href="/" id={titleId} onClick={() => setOpen(false)}>Receipt</Link>
+        <div>
+          <Link className="rx-pill rx-pill-ink" href="/docs/install" onClick={() => setOpen(false)}>Install</Link>
+          <button type="button" data-menu-close className="rx-menu-close" onClick={() => setOpen(false)} aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 4l10 10M14 4L4 14" fill="none" stroke="currentColor" strokeWidth="1.6" /></svg>
+          </button>
+        </div>
       </div>
-      <nav aria-label="All pages">
-        {TREE.map((item) => (
-          <div key={item.href + item.label} className="rx-menu-group">
-            <ItemLink item={item} pathname={pathname} onNavigate={() => setOpen(false)} />
-            {item.children ? (
-              <div className="rx-menu-sub">
-                {item.children.map((child) => (
-                  <ItemLink key={child.href} item={child} pathname={pathname} onNavigate={() => setOpen(false)} />
-                ))}
+      <div className="rx-menu-grid">
+        <nav aria-label="All pages">
+          {TREE.map((item, index) => (
+            <div key={item.href} className="rx-menu-group" style={{ animationDelay: `${index * 40}ms` }}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <div>
+                <ItemLink item={item} pathname={pathname} onNavigate={() => setOpen(false)} />
+                <p>{item.blurb}</p>
+                {item.children ? (
+                  <div className="rx-menu-sub">
+                    {item.children.map((child) => (
+                      <ItemLink key={child.href} item={child} pathname={pathname} onNavigate={() => setOpen(false)} />
+                    ))}
+                  </div>
+                ) : null}
               </div>
-            ) : null}
+            </div>
+          ))}
+        </nav>
+        <aside>
+          <img src="/hero/jet-poster.jpg" alt="" />
+          <p>Don&apos;t merge a preview without a Receipt.</p>
+          <div className="rx-menu-slip">
+            <b>Pull request #3</b>
+            <strong>passed</strong>
+            <span>186ecdc · 1 / 3 · green run 43699955024</span>
           </div>
-        ))}
-      </nav>
+          <p className="rx-menu-out">
+            <a href={REPO_URL}>GitHub</a>
+            <a href={HACKATHON_URL}>Kane CLI hackathon</a>
+          </p>
+        </aside>
+      </div>
+      <p className="rx-menu-foot">© 2026 Receipt</p>
     </div>
   ) : null;
 

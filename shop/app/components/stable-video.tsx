@@ -10,10 +10,12 @@ export default function StableVideo({
   src,
   poster,
   className,
+  eager = false,
 }: {
   src: string;
   poster?: string;
   className?: string;
+  eager?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -30,7 +32,7 @@ export default function StableVideo({
         if (entry.isIntersecting) play();
         else el.pause();
       },
-      { rootMargin: "0px", threshold: 0.15 },
+      { rootMargin: eager ? "0px" : "200px", threshold: 0.01 },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -46,7 +48,7 @@ export default function StableVideo({
       muted
       loop
       playsInline
-      preload="auto"
+      preload={eager ? "auto" : "none"}
     />
   );
 }

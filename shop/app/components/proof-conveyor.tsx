@@ -30,7 +30,7 @@ function hash(a: number, b: number, c: number) {
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 }
 
-export default function ProofConveyor() {
+export default function ProofConveyor({ bare = false }: { bare?: boolean }) {
   const beltRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const countRef = useRef<HTMLElement>(null);
@@ -57,7 +57,8 @@ export default function ProofConveyor() {
       const span = cw + gap;
       const period = span * CARDS.length;
       if (!state.lt) {
-        state.off = belt.clientWidth / 2 - cw * 0.62;
+        const narrow = belt.clientWidth < 768;
+        state.off = belt.clientWidth / 2 - cw * (narrow ? 0.35 : 0.62);
         state.lt = now;
       }
       const dt = Math.min(0.05, (now - state.lt) / 1000 || 0.016);
@@ -116,7 +117,8 @@ export default function ProofConveyor() {
           const p = (1 - d / (cw * 0.3)) ** 1.7;
           for (let gy = 0; gy < ch; gy += 4) {
             if (hash(gx, gy, i) > p * 0.85) continue;
-            ctx.fillStyle = d < 10 ? "#f9fafb" : "#202A36";
+            const hot = ["#fff1f2", "#fbd0d5", "#f08a96", "#d9485a", "#b4232f", "#9b2c2c", "#7f1d1d"];
+            ctx.fillStyle = d < 10 ? hot[Math.floor(hash(gx, gy, i) * 3)] : hot[3 + Math.floor(hash(gy, gx, i) * 4)];
             ctx.fillRect(sx, gy, 1.6, 1.6);
           }
         }
@@ -170,41 +172,56 @@ export default function ProofConveyor() {
   }, []);
 
   return (
-    <section className="rx-proof" aria-labelledby="proof-conveyor-title">
-      <div className="rx-proof-hero">
-        <div>
-          <p className="rx-kicker">Proof</p>
-          <h2 id="proof-conveyor-title">Built for reviewers.<br />Read from the runs.</h2>
+    <section className="rx-proof" aria-labelledby={bare ? undefined : "proof-conveyor-title"} aria-label={bare ? "Proof runs" : undefined}>
+      {bare ? null : (
+        <div className="rx-proof-hero">
+          <div>
+            <p className="rx-kicker">Proof</p>
+            <h2 id="proof-conveyor-title">Built for reviewers.<br />Read from the runs.</h2>
+          </div>
+          <div>
+            <p>Five real pull requests cross the line. Right of it, the run. Left of it, the receipt Kane left.</p>
+            <a className="rx-pill rx-pill-ink" href="/proof">See the proof</a>
+          </div>
         </div>
-        <div>
-          <p>Five open pull requests pass the line, then a sixth card for a pull request that has not run yet. Right of the line is the preview. Left of it is the receipt text. Nothing on the sixth card is a result.</p>
-          <a className="rx-pill rx-pill-ink" href="/proof" style={{ marginTop: 20 }}>See the proof</a>
+      )}
+      <div className="rx-belt-wrap">
+        <div className="rx-badge">
+          <span>Kane</span>
+          <b><em ref={countRef}>{CARDS[0].attempts}</em><i ref={pctRef}>{CARDS[0].verdict}</i></b>
         </div>
-      </div>
-      <div className="rx-badge">
-        <span>Fix attempt</span>
-        <b><em ref={countRef}>Kane</em><i ref={pctRef}>waiting</i></b>
-      </div>
-      <div className="rx-scan" aria-hidden="true" />
-      <div className="rx-belt" ref={beltRef}>
-        <canvas className="rx-fx" ref={canvasRef} />
-        {CARDS.map((card, index) => (
-          <article key={card.id} className="rx-card-abs" ref={(node) => { cards.current[index] = node; }} aria-hidden="true">
-            <div className="rx-card-face" style={{ backgroundImage: `linear-gradient(180deg, rgba(32,42,54,.15), rgba(32,42,54,.62)), url(${PHOTOS[index]})` }}>
-              <h3>{card.title}</h3>
-              <p>{card.lines[0]}</p>
-            </div>
-          </article>
-        ))}
-        {CARDS.map((card, index) => (
-          <pre key={`${card.id}-code`} className="rx-code-abs" ref={(node) => { codes.current[index] = node; }}>
-{`<h1>${card.title}</h1>
-<p>${card.lines.join("\n")}</p>
-<p>${card.attempts}</p>
-<p>${card.commit}</p>
-<p>${card.note}</p>`}
-          </pre>
-        ))}
+        <div className="rx-scan" aria-hidden="true" />
+        <div className="rx-belt" ref={beltRef}>
+          <canvas className="rx-fx" ref={canvasRef} />
+          {CARDS.map((card, index) => {
+            const photo = index % 2 === 0 && card.id !== "next" ? PHOTOS[index] : "";
+            const figure = card.id === "pr3" ? "$29" : card.id === "pr4" ? "0 / 3" : card.id === "next" ? "Install" : card.attempts;
+            return (
+              <article key={card.id} className={`rx-card-abs ${card.id === "next" ? "is-next" : ""} ${photo ? "has-photo" : ""}`} ref={(node) => { cards.current[index] = node; }} aria-hidden="true">
+                <div className="rx-mini" style={photo ? { backgroundImage: `linear-gradient(180deg, rgba(32,42,54,.55), rgba(32,42,54,.82)), url(${photo})` } : undefined}>
+                  <header><b>Receipt</b><span>Runs</span><span className="on">Proof</span><span>Shop</span></header>
+                  <p className="rx-mini-fig">{figure}</p>
+                  <p className="rx-mini-kick">{card.title}</p>
+                  <ul>
+                    {card.lines.slice(0, 3).map((line) => <li key={line}>{line}</li>)}
+                  </ul>
+                  <em>{card.verdict}</em>
+                </div>
+              </article>
+            );
+          })}
+          <div className="rx-codes">
+            {CARDS.map((card, index) => (
+              <pre key={`${card.id}-code`} className="rx-code-abs" ref={(node) => { codes.current[index] = node; }}>
+{`${card.title}
+${card.lines[0]}
+${card.attempts}
+verdict: ${card.verdict}
+github.com/ohjay-official/receipt`}
+              </pre>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

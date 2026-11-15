@@ -10,7 +10,8 @@ const NARROW = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07
 const NARROW_POSTER = "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/0f4926a4-e660-4df2-9195-2bfb3e341bdd.webp";
 const CARDS = [
   {
-    href: "/proof",
+    href: "/how-it-works#catch",
+    id: "catch",
     title: "Catch\nthe $29 total",
     metric: "$29",
     caption: "Failed checkout\non pull request #3",
@@ -18,7 +19,8 @@ const CARDS = [
     poster: "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/167977c6-8539-46b1-9a15-8dba566f50b8.png",
   },
   {
-    href: "https://github.com/ohjay-official/receipt/commit/186ecdc",
+    href: "/how-it-works#fix",
+    id: "fix",
     title: "Fix\nattempt 1 of 3",
     metric: "1/3",
     caption: "shop files only\ncommit 186ecdc",
@@ -26,7 +28,8 @@ const CARDS = [
     poster: "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/0446d1d5-e65e-4db5-8090-3e30d09afc43.png",
   },
   {
-    href: "https://github.com/ohjay-official/receipt/actions/runs/43699955024",
+    href: "/how-it-works#verify",
+    id: "verify",
     title: "Re-verify\nall five steps",
     metric: "5",
     caption: "Green run\n43699955024",
@@ -100,6 +103,35 @@ function ConnectionMap() {
   );
 }
 
+const DIGIT: Record<string, string[]> = {
+  "0": ["01110", "10001", "10001", "10001", "10001", "10001", "01110"],
+  "1": ["00100", "01100", "00100", "00100", "00100", "00100", "01110"],
+  "2": ["01110", "10001", "00001", "00110", "01000", "10000", "11111"],
+  "3": ["01110", "10001", "00001", "00110", "00001", "10001", "01110"],
+  "5": ["11111", "10000", "11110", "00001", "00001", "10001", "01110"],
+  "9": ["01110", "10001", "10001", "01111", "00001", "10001", "01110"],
+  $: ["00100", "01111", "10100", "01110", "00101", "11110", "00100"],
+  "/": ["00001", "00010", "00010", "00100", "01000", "01000", "10000"],
+};
+
+function MetricDots({ text }: { text: string }) {
+  const glyphs = text.split("").map((ch) => DIGIT[ch] || DIGIT["0"]);
+  let width = 0;
+  glyphs.forEach((g) => { width += g[0].length * 4 + 3; });
+  let x0 = 0;
+  return (
+    <svg className="rx-metric-dots" viewBox={`0 0 ${width} 28`} aria-hidden="true">
+      {glyphs.map((g, gi) => {
+        const origin = x0;
+        x0 += g[0].length * 4 + 3;
+        return g.map((row, y) => [...row].map((bit, x) => bit === "1" ? (
+          <circle key={`${gi}-${y}-${x}`} cx={origin + x * 4 + 1.6} cy={y * 4 + 1.6} r="1.45" fill="rgba(255,255,255,.97)" />
+        ) : null));
+      })}
+    </svg>
+  );
+}
+
 function DotWord({ word }: { word: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
@@ -169,13 +201,13 @@ export default function PerformanceStage() {
       </div>
       <div className="rx-cards">
         {CARDS.map((card, index) => (
-          <Link key={card.metric} className="rx-card" href={card.href}>
+          <Link key={card.metric} id={card.id} className="rx-card" href={card.href}>
             <StableVideo className="rx-card-media" poster={card.poster} src={card.video} />
             {index === 0 ? <Gauge /> : null}
             {index === 1 ? <TileWall /> : null}
             {index === 2 ? <ConnectionMap /> : null}
             <h3 className="rx-card-title">{card.title.split("\n").map((line) => <span key={line} style={{ display: "block" }}>{line}</span>)}</h3>
-            <p className="rx-card-metric">{card.metric}</p>
+            <p className="rx-card-metric" aria-label={card.metric}><MetricDots text={card.metric} /></p>
             <p className="rx-card-caption">{card.caption.split("\n").map((line) => <span key={line} style={{ display: "block" }}>{line}</span>)}</p>
             <span className="rx-card-more">Learn more</span>
           </Link>

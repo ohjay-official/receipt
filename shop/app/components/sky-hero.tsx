@@ -7,7 +7,7 @@ const JET = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA
 export default function SkyHero() {
   return (
     <section className="rx-hero" aria-labelledby="rx-hero-title">
-      <StableVideo className="rx-hero-video" src={JET} poster="/hero/jet-poster.jpg" />
+      <StableVideo eager className="rx-hero-video" src={JET} poster="/hero/jet-poster.jpg" />
       <div className="rx-hero-shade" />
       <div className="rx-hero-wrap">
         <SiteMenu overlay />

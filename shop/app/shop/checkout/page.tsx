@@ -11,7 +11,7 @@ export default function CheckoutPage() {
   return (
     <main>
       <div className="shop-wrap shop-page shop-checkout">
-        <div className="shop-band shop-band-short" style={{ backgroundImage: "url(https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/156ff74d-ee37-4443-8f3a-11ae2095ed4c.webp)" }} aria-hidden="true" />
+        <div className="shop-identity"><p>Field &amp; Ledger</p><span>Demo store guarded by Receipt</span></div>
         <DemoBanner />
         <p className="label">Checkout</p>
         <h1>Review your order</h1>

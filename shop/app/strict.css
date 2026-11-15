@@ -1,9 +1,6 @@
 /* Marketing chrome only. Shop routes never get .rx. */
 
-html { overflow-x: clip; }
-
 .rx {
-  overflow-x: clip;
   --rx-ink: #202a36;
   --rx-ink-hover: #1a2229;
   --rx-gray-500: #6b7280;
