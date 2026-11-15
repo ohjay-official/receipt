@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Checkout",
 };
 
+/** Proof PR #3: trivial shop-only change so Vercel builds a preview that still has all three seeded bugs. Do not merge. */
 export default function CheckoutPage() {
   return (
     <main>
