@@ -83,7 +83,7 @@ async function main() {
       apiKey: process.env.GEMINI_API_KEY,
     });
   } catch (err) {
-    console.log(redact(err.message || String(err)));
+    console.log(`Fixer Gemini failed after retries: ${redact(err.message || String(err))}`);
     setOutput("fixer_status", "gemini-failed");
     return;
   }
