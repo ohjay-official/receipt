@@ -8,8 +8,8 @@ A drop-in GitHub Action that runs [Kane CLI](https://www.testmuai.com/docs/kane-
 
 ## For Judges (about two minutes)
 
-1. Open the live shop: https://receipt-taupe-one.vercel.app
-2. Open `/pricing`. Pro is **$19**. Open `/checkout`. The total is **$29**. Enter **LAUNCH10** — the total should become **$17.10** but does not move. Click **Phone layout (390px)**, then **Pay** — Pay is covered. Those are the three seeded bugs. Production stays on `main`.
+1. Open the live site: https://receipt-taupe-one.vercel.app — home is the Receipt product, with paths to How it works, Docs, Proof, and the demo shop. The fixture Kane guards is at `/shop`.
+2. Open `/pricing` (also at `/shop/pricing`). Pro is **$19**. Open `/checkout` (also at `/shop/checkout`). The total is **$29**. Enter **LAUNCH10** — the total should become **$17.10** but does not move. Click **Phone layout (390px)**, then **Pay** — Pay is covered. Those are the three seeded bugs. Production stays on `main`.
 3. Open the three-bug proof PR (leave it open): https://github.com/ohjay-official/receipt/pull/3
 4. The Receipt comment is a card: **passed**, all five Kane steps green, attempts **1 / 3**. The catch is in the red run: Kane failed “Checkout must show $19 for Pro” (coupon and Pay were skipped after that first required failure).
 5. See `receipt-fix: 1` (`186ecdc`). It touches only `shop/lib/prices.ts` and `shop/lib/checkout.ts` — checkout $19, LAUNCH10 yields $17.10, Pay overlay off. The later Receipt run is green, including “Pay works in the phone layout.”
@@ -18,7 +18,7 @@ A drop-in GitHub Action that runs [Kane CLI](https://www.testmuai.com/docs/kane-
 
 Proof (do not trust a green badge without the clip):
 
-- Production (all three bugs still present): https://receipt-taupe-one.vercel.app
+- Production (product site; all three bugs still present on the shop): https://receipt-taupe-one.vercel.app
 - Three-bug PR: https://github.com/ohjay-official/receipt/pull/3
 - Preview after the fix (`/checkout` is $19, coupon and Pay work): https://receipt-git-demo-t3-three-bugs-oh-jay-s-projects.vercel.app
 - Red Kane run (the $29 catch; coupon and Pay skipped): https://github.com/ohjay-official/receipt/actions/runs/43698574333
@@ -160,10 +160,29 @@ This project is built to stay on **$0**: Kane’s free 10,000-credit grant, GitH
 
 ---
 
+
+## Site
+
+The production deploy is a multi-page Receipt site, not a one-page shop mock. `/pricing` and `/checkout` remain working aliases so the How-to-test contract does not have to change.
+
+- Home: https://receipt-taupe-one.vercel.app
+- How it works: https://receipt-taupe-one.vercel.app/how-it-works
+- Docs: https://receipt-taupe-one.vercel.app/docs
+  - Install: https://receipt-taupe-one.vercel.app/docs/install
+  - The contract: https://receipt-taupe-one.vercel.app/docs/contract
+  - Configuration: https://receipt-taupe-one.vercel.app/docs/configuration
+  - Guardrails: https://receipt-taupe-one.vercel.app/docs/guardrails
+  - Limitations: https://receipt-taupe-one.vercel.app/docs/limitations
+- Proof: https://receipt-taupe-one.vercel.app/proof
+- Demo shop: https://receipt-taupe-one.vercel.app/shop
+  - Plans: https://receipt-taupe-one.vercel.app/shop/pricing (alias: `/pricing`)
+  - Cart: https://receipt-taupe-one.vercel.app/shop/cart
+  - Checkout: https://receipt-taupe-one.vercel.app/shop/checkout (alias: `/checkout`)
+
 ## Repo map
 
 - `action.yml` / `src/` — the composite Receipt action
-- `shop/` — Next.js fixture (`/pricing` $19, `/checkout` $29)
+- `shop/` — Next.js site: Receipt marketing, docs, proof, and the Field & Ledger demo shop (`/pricing` $19, `/checkout` $29; aliases of `/shop/pricing` and `/shop/checkout`)
 - `tests/receipt_checkout_test.md` — the Kane contract
 - `.github/workflows/receipt.yml` — demo workflow (`pull_request` / `repository_dispatch` / `deployment_status` / `workflow_dispatch`)
 - `.github/workflows/ci.yml` — unit tests and `next build`

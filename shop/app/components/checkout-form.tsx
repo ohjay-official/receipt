@@ -10,7 +10,7 @@ import {
   NARROW_VIEWPORT_MAX_PX,
   SEED_BLOCK_PAY_ON_MOBILE,
 } from "@/lib/checkout";
-import { CHECKOUT_PRO_USD, formatUsd, PLAN_NAME, PLAN_PERIOD } from "@/lib/prices";
+import { CHECKOUT_PRO_USD, formatUsd, PLAN_NAME, PLAN_PERIOD, PRO_PLAN_USD } from "@/lib/prices";
 
 function formatTotal(amount: number): string {
   if (Number.isNaN(amount)) return "NaN";
@@ -94,7 +94,10 @@ export default function CheckoutForm() {
           <tr className="total-row">
             <th scope="row">Total due today</th>
             <td>
-              <strong className="price wrong" style={{ fontSize: "2rem" }} data-testid="checkout-total">
+              <strong
+                className={total !== PRO_PLAN_USD && !applied ? "price figure mismatch" : "price figure"}
+                data-testid="checkout-total"
+              >
                 {formatTotal(total)}
               </strong>
             </td>
@@ -165,7 +168,7 @@ export default function CheckoutForm() {
 
       {SEED_BLOCK_PAY_ON_MOBILE ? (
         <div className="pay-blocker" data-testid="pay-blocker">
-          <p className="kicker">Chat</p>
+          <p className="blocker-label">Chat</p>
           <p>Need help? Chat with us — we typically reply in a few minutes.</p>
         </div>
       ) : null}

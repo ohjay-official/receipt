@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, Newsreader } from "next/font/google";
-import Link from "next/link";
-import { SHOP_NAME } from "@/lib/prices";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
+import SiteHeader from "./components/site-header";
+import SiteFooter from "./components/site-footer";
+import { SITE_NAME, TAGLINE } from "@/lib/site";
 import "./globals.css";
 
 const serif = Newsreader({
@@ -17,35 +18,31 @@ const sans = IBM_Plex_Sans({
   display: "swap",
 });
 
+const mono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
-    default: SHOP_NAME,
-    template: `%s — ${SHOP_NAME}`,
+    default: SITE_NAME,
+    template: `%s — ${SITE_NAME}`,
   },
-  description: "A small press-supply shop. Monthly Pro membership is advertised at $19.",
+  description: TAGLINE,
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
+    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <body>
-        <div className="shell">
-          <header className="site-header">
-            <Link className="wordmark" href="/">
-              {SHOP_NAME}
-            </Link>
-            <nav className="nav" aria-label="Primary">
-              <Link href="/pricing">Plans</Link>
-              <Link href="/checkout">Checkout</Link>
-            </nav>
-          </header>
+        <div className="page">
+          <SiteHeader />
           {children}
-          <footer className="site-footer">
-            <span>{SHOP_NAME}</span>
-            <span>Invoice, not a subscription wall.</span>
-          </footer>
+          <SiteFooter />
         </div>
       </body>
     </html>
