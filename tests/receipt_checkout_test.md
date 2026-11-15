@@ -22,6 +22,6 @@ Verify that checkout shows $19 for Pro. Fail the step if checkout shows any othe
 
 On the checkout page, enter the coupon code LAUNCH10 and apply it. The Pro total due today must become $17.10 (ten percent off $19). Fail the step if the total is unchanged, shows NaN, or is any other amount.
 
-## Pay works at a narrow mobile viewport
+## Pay works in the phone layout
 
-On checkout, use a narrow viewport. Kane 0.10 rejects window widths under 800px and has no 390px device mode, so resize the window to 800px wide if it is wider. Do not try widths below 800 and do not keep retrying a smaller window. A 390px phone hits the same overlay. Click the Pay button. Verify a confirmation that payment was accepted (for example the text "Payment accepted"). Fail if Pay does nothing, is covered, or cannot be clicked at this width.
+On checkout, do not resize the browser window (Kane's CI Chrome is 1920px and has no window-resize action). Click the button labeled "Phone layout (390px)" to apply the same overlay a 390px phone hits. Then click Pay. Verify a confirmation that payment was accepted (for example the text "Payment accepted"). Fail if Pay does nothing, is covered, or cannot be clicked in that layout.

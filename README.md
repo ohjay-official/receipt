@@ -45,7 +45,7 @@ CI: Action unit tests and Shop build stay green. On `main`, the Shop contracts j
 2. Choose Pro and continue to checkout (`/checkout`).
 3. Checkout must show **$19** for Pro, not any other amount.
 4. Enter coupon code **LAUNCH10** and apply it. The Pro total must become **$17.10** (10% off $19), not stay the same, show NaN, or any other amount.
-5. Use a narrow viewport and click **Pay**. A confirmation such as “Payment accepted” must appear. Fail if Pay does nothing, is covered, or cannot be clicked. A 390px phone must hit this; Kane 0.10 cannot open a window under 800px, so the test resizes to **800px** and the overlay also applies at `max-width: 900px`.
+5. Click **Phone layout (390px)**, then click **Pay**. A confirmation such as “Payment accepted” must appear. Fail if Pay does nothing, is covered, or cannot be clicked in that layout. A real 390px phone must also work: the same overlay applies at `max-width: 900px`.
 
 <!-- /kane:how-to-test -->
 
@@ -55,7 +55,7 @@ The first Kane run on a PR that still has the seeded bugs (checkout **$29**, cou
 
 ### Honest note: Kane 0.10.4 has no 390px viewport setting
 
-Official testmd frontmatter has no viewport or device-width key. `kane-cli config set-window` rejects widths under 800px. Kane “mobile” targets (`emulator`, `simulator`, `android`, `ios`) are native apps, not a Chrome phone viewport, and `--remote` is out of scope on a $0 budget. Step 5 therefore tells Kane to resize to 800px (its minimum) and not to keep retrying a 390px window. The seeded Pay overlay is a CSS `@media (max-width: 900px)` rule, so a 390px phone and Kane’s 800px window both hit the bug; a wide desktop viewport does not.
+Official testmd frontmatter has no viewport or device-width key. `kane-cli config set-window` rejects widths under 800px. Kane “mobile” targets are native apps, not a Chrome phone viewport, and `--remote` is out of scope on a $0 budget. On PR #3 Kane also showed that the CI Chrome session is 1920px and exposes **no window-resize action**, so a “resize to 800px” step fails as an environment issue and never clicks Pay. Step 5 therefore uses an in-page **Phone layout (390px)** control that applies the same overlay a 390px phone (and any window `max-width: 900px`) hits. Kane must not try to resize the browser.
 
 ### Honest note: Kane 0.10.4 replay ignores `--url`
 

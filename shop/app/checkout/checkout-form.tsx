@@ -28,6 +28,7 @@ export default function CheckoutForm() {
   const [applied, setApplied] = useState("");
   const [paid, setPaid] = useState(false);
   const [payError, setPayError] = useState("");
+  const [phoneLayout, setPhoneLayout] = useState(false);
 
   const total = useMemo(() => {
     if (!applied) return CHECKOUT_PRO_USD;
@@ -46,9 +47,11 @@ export default function CheckoutForm() {
 
   function onPay() {
     setPayError("");
-    if (SEED_BLOCK_PAY_ON_MOBILE && typeof window !== "undefined" && window.innerWidth <= NARROW_VIEWPORT_MAX_PX) {
+    const narrowViewport =
+      typeof window !== "undefined" && window.innerWidth <= NARROW_VIEWPORT_MAX_PX;
+    if (SEED_BLOCK_PAY_ON_MOBILE && (phoneLayout || narrowViewport)) {
       // Overlay should already intercept the click; this is a safety net
-      // if the button still receives it at 390px.
+      // if the button still receives it in the phone layout.
       setPayError("Pay could not be reached.");
       return;
     }
@@ -126,6 +129,21 @@ export default function CheckoutForm() {
       </p>
 
       <div className="actions checkout-actions">
+        <button
+          className="btn btn-secondary"
+          type="button"
+          data-testid="phone-layout"
+          aria-pressed={phoneLayout}
+          onClick={() => {
+            const next = !phoneLayout;
+            setPhoneLayout(next);
+            setPaid(false);
+            setPayError("");
+            document.documentElement.classList.toggle("is-narrow", next);
+          }}
+        >
+          {phoneLayout ? "Exit phone layout" : "Phone layout (390px)"}
+        </button>
         <button className="btn" type="button" onClick={onPay} data-testid="pay-button">
           Pay
         </button>
