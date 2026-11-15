@@ -108,6 +108,20 @@ export const BELT = [
     ],
   },
   {
+    id: "pr2",
+    title: "Pull request #2",
+    href: EARLIER.pr2,
+    lines: ["First closed loop", "Fix e7542b0", "Red run 43686930592"],
+    verdict: "passed" as BeltVerdict,
+    attempts: "receipt-fix: 1",
+    commit: "e7542b0",
+    note: "Green run 43687402846",
+    links: [
+      { label: "Pull request", href: EARLIER.pr2 },
+      { label: "e7542b0", href: EARLIER.pr2Fix },
+    ],
+  },
+  {
     id: "pr3",
     title: "Pull request #3",
     href: PR3.url,

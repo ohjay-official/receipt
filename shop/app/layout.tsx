@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
-import SiteHeader from "./components/site-header";
-import SiteFooter from "./components/site-footer";
+import { IBM_Plex_Mono, IBM_Plex_Sans, Inter, Newsreader } from "next/font/google";
+import SiteFrame from "./components/site-frame";
 import { SITE_NAME, TAGLINE } from "@/lib/site";
 import "./globals.css";
 import "./marketing.css";
+import "./strict.css";
 
 const serif = Newsreader({
   subsets: ["latin"],
@@ -26,6 +26,13 @@ const mono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
     default: SITE_NAME,
@@ -38,13 +45,9 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable} ${inter.variable}`}>
       <body>
-        <div className="page">
-          <SiteHeader />
-          {children}
-          <SiteFooter />
-        </div>
+        <SiteFrame>{children}</SiteFrame>
       </body>
     </html>
   );
