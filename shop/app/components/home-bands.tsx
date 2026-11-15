@@ -14,7 +14,7 @@ export function FeatureBands() {
     <section className="rx-band" aria-labelledby="band-catch">
       <div className="rx-container">
         <p className="rx-kicker">The loop</p>
-        <h2 id="band-catch">Catch a failing preview without the ceremony</h2>
+        <h2 id="band-catch">Kane reads the preview. The receipt stays on the pull request.</h2>
         <p className="rx-lead">Connect the pull request. Receipt waits for Vercel, runs Kane, and leaves the card. <Link href="/how-it-works">Learn more</Link></p>
         <div className="rx-frame">
           <div className="rx-frame-bar"><i /><i /><i /><span>github.com/ohjay-official/receipt/pull/3</span></div>

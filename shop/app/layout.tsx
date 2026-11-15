@@ -7,6 +7,7 @@ import "./marketing.css";
 import "./strict.css";
 import "./pages.css";
 import "./balance.css";
+import "./canvas.css";
 
 const serif = Newsreader({
   subsets: ["latin"],

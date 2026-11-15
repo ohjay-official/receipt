@@ -1,0 +1,190 @@
+/* One ink canvas from the hero fade through the footer. Paper is only a receipt. */
+
+body:has(.page.rx:not(.shop-site)) { background: #202a36; }
+
+.page.rx:not(.shop-site) {
+  background: #202a36;
+  color: #eef0f5;
+}
+
+.page.rx:not(.shop-site) .rx-nav-solid {
+  background: transparent;
+  border-bottom: 0;
+  color: #eef0f5;
+}
+.page.rx:not(.shop-site) .rx-nav-solid .rx-brand,
+.page.rx:not(.shop-site) .rx-nav-solid .rx-links a { color: #eef0f5; }
+
+.rx-hero-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 32%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(32, 42, 54, 0), #202a36 78%);
+}
+
+.page.rx:not(.shop-site) .rx-band,
+.page.rx:not(.shop-site) .rx-proof,
+.page.rx:not(.shop-site) .rx-stage,
+.page.rx:not(.shop-site) .rx-calc,
+.page.rx:not(.shop-site) .rx-vela,
+.page.rx:not(.shop-site) .rx-vela-m,
+.page.rx:not(.shop-site) .rx-install,
+.page.rx:not(.shop-site) .vx {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.page.rx:not(.shop-site) .rx-band { padding: 96px 20px; }
+@media (min-width: 900px) {
+  .page.rx:not(.shop-site) .rx-band { padding: 112px 48px; }
+}
+
+.page.rx:not(.shop-site) .rx-kicker {
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-weight: 500;
+  color: #7a8296;
+}
+.page.rx:not(.shop-site) h2,
+.page.rx:not(.shop-site) .rx-proof-hero h2,
+.page.rx:not(.shop-site) .rx-page-copy h1,
+.page.rx:not(.shop-site) .rx-page-title {
+  font-family: var(--font-inter), Inter, "Helvetica Neue", sans-serif;
+  color: #eef0f5;
+  font-weight: 500;
+}
+.page.rx:not(.shop-site) .rx-lead,
+.page.rx:not(.shop-site) .rx-proof-hero p,
+.page.rx:not(.shop-site) .rx-page-copy p,
+.page.rx:not(.shop-site) .rx-icon-row p,
+.page.rx:not(.shop-site) .rx-timeline-list p {
+  color: #a3a9b8;
+}
+
+.page.rx:not(.shop-site) .rx-stage { margin-top: -40px; }
+.page.rx:not(.shop-site) .rx-stage-video,
+.page.rx:not(.shop-site) .rx-stage-still { opacity: 0; }
+.page.rx:not(.shop-site) .slip,
+.page.rx:not(.shop-site) .slip h2,
+.page.rx:not(.shop-site) .slip h3,
+.page.rx:not(.shop-site) .slip p,
+.page.rx:not(.shop-site) .slip li,
+.page.rx:not(.shop-site) .rx-slip,
+.page.rx:not(.shop-site) .rx-slip h2,
+.page.rx:not(.shop-site) .rx-slip h3,
+.page.rx:not(.shop-site) .rx-slip p,
+.page.rx:not(.shop-site) .rx-mini,
+.page.rx:not(.shop-site) .rx-mini h3,
+.page.rx:not(.shop-site) .rx-mini p,
+.page.rx:not(.shop-site) .rx-mini li { color: #202a36; }
+.page.rx:not(.shop-site) .rx-proof { margin-top: -24px; }
+
+.page.rx:not(.shop-site) .rx-frame,
+.page.rx:not(.shop-site) .rx-pipeline article,
+.page.rx:not(.shop-site) .rx-meter div:not(.is-used),
+.page.rx:not(.shop-site) .rx-allow div,
+.page.rx:not(.shop-site) .rx-vm,
+.page.rx:not(.shop-site) .rx-doc li,
+.page.rx:not(.shop-site) .rx-doc-cards a {
+  background: #151c25;
+  color: #eef0f5;
+  border-color: rgba(238, 240, 245, 0.08);
+  box-shadow: none;
+}
+.page.rx:not(.shop-site) .rx-frame-ink { background: #11141c; }
+.page.rx:not(.shop-site) .rx-log { color: #a3a9b8; }
+.page.rx:not(.shop-site) .rx-pipeline strong { color: #eef0f5; }
+.page.rx:not(.shop-site) .rx-pipeline article:first-child strong { color: #e0475a; }
+.page.rx:not(.shop-site) .rx-ledger { border-top-color: rgba(238, 240, 245, 0.08); }
+.page.rx:not(.shop-site) .rx-ledger a { border-bottom-color: rgba(238, 240, 245, 0.08); color: #eef0f5; }
+.page.rx:not(.shop-site) .rx-statline { color: #eef0f5; }
+.page.rx:not(.shop-site) .rx-bars .is-plan { background: #1a1e28; color: #eef0f5; }
+
+.page.rx:not(.shop-site) .rx-calc-grid { border-color: rgba(238, 240, 245, 0.08); }
+.page.rx:not(.shop-site) .rx-calc-form,
+.page.rx:not(.shop-site) .rx-calc-side { background: #151c25; }
+
+.page.rx:not(.shop-site) .slip,
+.page.rx:not(.shop-site) .rx-slip,
+.page.rx:not(.shop-site) .rx-mini,
+.page.rx:not(.shop-site) .rx-menu-slip {
+  background: #f4f1ea;
+  color: #202a36;
+}
+.slip, .rx-slip { position: relative; }
+.slip::after, .rx-slip::after {
+  content: "VERIFIED";
+  position: absolute;
+  right: 18px;
+  top: 28px;
+  z-index: 2;
+  color: #b4232f;
+  border: 2px solid #b4232f;
+  padding: 4px 6px;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+.slip-failed::after { content: "REFUSED"; }
+
+.page.rx:not(.shop-site) .rx-page-hero,
+.page.rx:not(.shop-site) .rx-page-hero-compact {
+  background: transparent;
+  color: #eef0f5;
+}
+.page.rx:not(.shop-site) .rx-page-still { opacity: 0.18; filter: grayscale(1) brightness(0.35); }
+.page.rx:not(.shop-site) .rx-page-copy p,
+.page.rx:not(.shop-site) .rx-crumb,
+.page.rx:not(.shop-site) .rx-crumb a { color: #a3a9b8; }
+
+.page.rx:not(.shop-site) .docs-nav a,
+.page.rx:not(.shop-site) .rx .docs-nav a {
+  background: #151c25;
+  color: #eef0f5;
+  border-color: rgba(238, 240, 245, 0.1);
+}
+.page.rx:not(.shop-site) .docs-nav a[aria-current="page"] {
+  background: #eef0f5;
+  color: #202a36;
+}
+.page.rx:not(.shop-site) .rx-doc p,
+.page.rx:not(.shop-site) .rx-doc li { color: #c5cad3; }
+.page.rx:not(.shop-site) .rx-doc h1,
+.page.rx:not(.shop-site) .rx-doc h2 { color: #eef0f5; }
+
+.page.rx:not(.shop-site) .vx-glow,
+.page.rx:not(.shop-site) .vx-video,
+.page.rx:not(.shop-site) .vx-video-fade,
+.page.rx:not(.shop-site) .vx-band { display: none; }
+.page.rx:not(.shop-site) .vx { height: auto; min-height: 0; overflow: visible; container-type: normal; }
+.page.rx .vx { height: auto; min-height: 0; overflow: visible; container-type: normal; }
+.page.rx .vx-ui { display: none; }
+.page.rx .vx-phone { display: block; }
+.page.rx:not(.shop-site) .vx-svg { display: none; }
+.page.rx:not(.shop-site) .vx-copy,
+.page.rx:not(.shop-site) .vx-col,
+.page.rx:not(.shop-site) .vx-follow,
+.page.rx:not(.shop-site) .vx-social,
+.page.rx:not(.shop-site) .vx-cta,
+.page.rx:not(.shop-site) .vx-copyline {
+  position: relative;
+  left: auto;
+  right: auto;
+  top: auto;
+}
+.page.rx:not(.shop-site) .vx-phone { display: block; margin: 0; padding: 8px 20px 40px; }
+.page.rx:not(.shop-site) .vx-phone-cols { border-top: 0; }
+
+.shop-site { background: #f4f1ea; color: #202a36; }
+.shop-site .rx-nav-solid { background: #f4f1ea; }
+.shop-site .vx { background: #f4f1ea; color: #202a36; }
+.shop-site .vx-glow, .shop-site .vx-video, .shop-site .vx-video-fade, .shop-site .vx-band { display: none; }
+.shop-site .vx-phone, .shop-site .vx-phone a, .shop-site .vx-phone h2 { color: #202a36; }

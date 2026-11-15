@@ -190,7 +190,7 @@ export default function ProofConveyor({ bare = false }: { bare?: boolean }) {
         <div className="rx-proof-hero">
           <div>
             <p className="rx-kicker">Proof</p>
-            <h2 id="proof-conveyor-title">Built for reviewers.<br />Read from the runs.</h2>
+            <h2 id="proof-conveyor-title">Five pull requests,<br />still open.</h2>
           </div>
           <div>
             <p>Five real pull requests cross the line. Right of it, the run. Left of it, the receipt Kane left.</p>

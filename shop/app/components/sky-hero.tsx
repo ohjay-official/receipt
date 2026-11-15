@@ -9,6 +9,7 @@ export default function SkyHero() {
     <section className="rx-hero" aria-labelledby="rx-hero-title">
       <StableVideo eager className="rx-hero-video" src={JET} poster="/hero/jet-poster.jpg" />
       <div className="rx-hero-shade" />
+      <div className="rx-hero-fade" aria-hidden="true" />
       <div className="rx-hero-wrap">
         <SiteMenu overlay />
         <div className="rx-hero-main">
