@@ -9,31 +9,35 @@ A drop-in GitHub Action that runs [Kane CLI](https://www.testmuai.com/docs/kane-
 ## For Judges (about two minutes)
 
 1. Open the live shop: https://receipt-taupe-one.vercel.app
-2. Open `/pricing`. Pro is **$19**. Open `/checkout`. The total is **$29**. That mismatch is the seeded bug (production is still on `main`).
-3. Open the demo pull request: https://github.com/ohjay-official/receipt/pull/1
-4. The Receipt comment is now **green**. The catch is in the red run: Kane failed “Checkout must show $19 for Pro” with a bug verdict that checkout rendered **$29**.
-5. See commit `receipt-fix: 1` (`9492501`). It touches only `shop/**` (this README is unchanged). The later Receipt comment and run are green.
+2. Open `/pricing`. Pro is **$19**. Open `/checkout`. The total is **$29**. Enter **LAUNCH10** — the total should become **$17.10** but does not move. Click **Phone layout (390px)**, then **Pay** — Pay is covered. Those are the three seeded bugs. Production stays on `main`.
+3. Open the three-bug proof PR (leave it open): https://github.com/ohjay-official/receipt/pull/3
+4. The Receipt comment is a card: **passed**, all five Kane steps green, attempts **1 / 3**. The catch is in the red run: Kane failed “Checkout must show $19 for Pro” (coupon and Pay were skipped after that first required failure).
+5. See `receipt-fix: 1` (`186ecdc`). It touches only `shop/lib/prices.ts` and `shop/lib/checkout.ts` — checkout $19, LAUNCH10 yields $17.10, Pay overlay off. The later Receipt run is green, including “Pay works in the phone layout.”
+6. Open the refusal proof PR (leave it open): https://github.com/ohjay-official/receipt/pull/4  
+   Kane failed the $29 checkout again. The fixer proposed a cheating edit to the Kane test. Receipt did **not** push. The card says **Fix refused:** `Receipt refused fix: touched tests/checkout_test.md`.
 
 Proof (do not trust a green badge without the clip):
 
-- Production (bug still present): https://receipt-taupe-one.vercel.app
-- Demo PR: https://github.com/ohjay-official/receipt/pull/1
-- Preview after the fix (`/checkout` is $19): https://receipt-git-demo-t6-first-kane-run-oh-jay-s-projects.vercel.app
-- Red Kane run (the $29 catch): https://github.com/ohjay-official/receipt/actions/runs/43683895636
-- Evidence of that catch: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149438398
-- Green re-verify (manual `workflow_dispatch`): https://github.com/ohjay-official/receipt/actions/runs/43684482513
-- Green evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149882316
-- Auto-trigger green run on the demo PR (`pull_request`, no manual dispatch): https://github.com/ohjay-official/receipt/actions/runs/43685063728
-- Evidence from that auto-run (includes `tests/output-checkout/` recordings): https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149699945
-- Auto-trigger proof PR (leave open): https://github.com/ohjay-official/receipt/pull/2
-- Proof-PR preview (after `receipt-fix: 1`, `/checkout` is $19): https://receipt-git-demo-t8-auto-trigger-proof-oh-jay-s-projects.vercel.app
-- Auto-trigger red run on that PR (replay remapped onto the $29 preview): https://github.com/ohjay-official/receipt/actions/runs/43686930592
-- Evidence of that $29 catch: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14150678568
-- Fixer commit on #2: `receipt-fix: 1` (`e7542b0`), `shop/lib/prices.ts` only
-- Auto-trigger green re-verify (fixer push, no manual dispatch): https://github.com/ohjay-official/receipt/actions/runs/43687402846
-- Green evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14150359940
+- Production (all three bugs still present): https://receipt-taupe-one.vercel.app
+- Three-bug PR: https://github.com/ohjay-official/receipt/pull/3
+- Preview after the fix (`/checkout` is $19, coupon and Pay work): https://receipt-git-demo-t3-three-bugs-oh-jay-s-projects.vercel.app
+- Red Kane run (the $29 catch; coupon and Pay skipped): https://github.com/ohjay-official/receipt/actions/runs/43698574333
+- Evidence of that catch: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14155571858
+- Fixer commit: `receipt-fix: 1` (`186ecdc`)
+- Green re-verify (fixer push, `pull_request`, no manual dispatch): https://github.com/ohjay-official/receipt/actions/runs/43699955024
+- Green evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14156410343
+- Refusal PR: https://github.com/ohjay-official/receipt/pull/4
+- Refusal run (`RECEIPT_DEMO_CHEAT=1`, no fixer commit): https://github.com/ohjay-official/receipt/actions/runs/43700368892
+- Refusal evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14155439852
 
-CI: Action unit tests and Shop build stay green. On `main`, the Shop contracts job stays red on purpose: checkout is $29, coupon LAUNCH10 does not take 10% off $19, Pay is blocked at 390px, and the unit tests assert the correct contracts. After a successful `receipt-fix` on a demo PR, those shop tests go green on that branch only. Production on `main` keeps the seeded bugs.
+Earlier loops (leave #1 and #2 open as well):
+
+- First live catch and green re-verify: [PR #1](https://github.com/ohjay-official/receipt/pull/1) — red [43683895636](https://github.com/ohjay-official/receipt/actions/runs/43683895636), green [43684482513](https://github.com/ohjay-official/receipt/actions/runs/43684482513)
+- First closed autonomous loop (`pull_request` only): [PR #2](https://github.com/ohjay-official/receipt/pull/2) — red [43686930592](https://github.com/ohjay-official/receipt/actions/runs/43686930592), fix [`e7542b0`](https://github.com/ohjay-official/receipt/commit/e7542b0), green [43687402846](https://github.com/ohjay-official/receipt/actions/runs/43687402846)
+
+CI: Action unit tests and Shop build stay green. On `main`, the Shop contracts job stays red on purpose: checkout is $29, coupon LAUNCH10 does not take 10% off $19, Pay is blocked at 390px / in Phone layout, and the unit tests assert the correct contracts. After a successful `receipt-fix` on a demo PR, those shop tests go green on that branch only. Production on `main` keeps the seeded bugs.
+
+Honest limits (also in the notes below): Kane 0.10.4 replay ignores `--url` (Receipt remaps recordings). Kane’s CI Chrome is 1920px and has no window-resize action, so the Pay check uses the in-page Phone layout control plus a `max-width: 900px` overlay that a real phone still hits. A stale Test Manager write lock blocked the first PR #3 runs; the contract now lives at `tests/receipt_checkout_test.md`.
 
 ---
 
