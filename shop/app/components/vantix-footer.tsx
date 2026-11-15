@@ -82,7 +82,7 @@ export default function VantixFooter() {
       <div className="vx-phone">
         <p className="rx-word">Receipt</p>
         <p>Don&apos;t merge a preview without a Receipt.</p>
-        <Link className="vx-phone-cta" href="/docs/install"><i />Install</Link>
+        <Link className="vx-phone-cta" href="/docs/install"><i><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M4 14 L14 4 M8 4 H14 V10" /></svg></i>Install</Link>
         <div className="vx-phone-cols">
           <nav aria-label="Product">
             <h2>Product</h2>

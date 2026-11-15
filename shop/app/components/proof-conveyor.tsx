@@ -56,9 +56,9 @@ export default function ProofConveyor({ bare = false }: { bare?: boolean }) {
       const gap = Math.max(24, belt.clientWidth * 0.0475);
       const span = cw + gap;
       const period = span * CARDS.length;
+      const narrow = belt.clientWidth < 768;
       if (!state.lt) {
-        const narrow = belt.clientWidth < 768;
-        state.off = belt.clientWidth / 2 - cw * (narrow ? 0.35 : 0.62);
+        state.off = narrow ? 0 : belt.clientWidth / 2 - cw * 0.62;
         state.lt = now;
       }
       const dt = Math.min(0.05, (now - state.lt) / 1000 || 0.016);
@@ -70,26 +70,38 @@ export default function ProofConveyor({ bare = false }: { bare?: boolean }) {
         state.vel += (target - state.vel) * (1 - Math.exp(-2.2 * dt));
         state.off += state.vel * dt;
       }
-      const Lx = belt.clientWidth / 2;
+      const scan = belt.querySelector<HTMLElement>(".rx-scan");
+      const Lx = narrow ? 0 : belt.clientWidth / 2;
       const top = belt.getBoundingClientRect().top;
       let cross = -1;
+      let leadX = 0;
       const placed: { x: number; cut: number }[] = [];
       for (let i = 0; i < CARDS.length; i += 1) {
-        const x = ((state.off + i * span) % period + period) % period - span;
-        const cut = Math.max(0, Math.min(cw, Lx - x));
+        let raw = ((state.off + i * span) % period + period) % period;
+        if (narrow && raw > period / 2) raw -= period;
+        const x = narrow ? raw : raw - span;
+        const cut = narrow ? 0 : Math.max(0, Math.min(cw, Lx - x));
         placed.push({ x, cut });
         const card = cards.current[i];
         const code = codes.current[i];
         if (card) {
           card.style.transform = `translate3d(${x}px,0,0)`;
-          card.style.clipPath = cut > 0 ? `inset(0 0 0 ${cut}px)` : "none";
+          card.style.clipPath = narrow || cut <= 0 ? "none" : `inset(0 0 0 ${cut}px)`;
         }
         if (code) {
           code.style.transform = `translate3d(${x}px,0,0)`;
-          code.style.visibility = cut > 0 ? "visible" : "hidden";
+          code.style.visibility = !narrow && cut > 0 ? "visible" : "hidden";
           code.style.clipPath = `inset(0 ${Math.max(0, cw - cut)}px 0 0)`;
         }
-        if (cut > 0 && cut < cw) cross = i;
+        if (narrow && (cross < 0 || Math.abs(x - 12) < Math.abs(leadX - 12))) {
+          cross = i;
+          leadX = x;
+        } else if (!narrow && cut > 0 && cut < cw) cross = i;
+      }
+      if (narrow && scan) {
+        scan.style.left = `${Math.max(0, leadX)}px`;
+        scan.style.marginLeft = "0";
+        scan.style.height = `${ch}px`;
       }
       if (countRef.current && pctRef.current) {
         const label = cross >= 0 ? CARDS[cross].attempts : "Kane";
@@ -109,11 +121,12 @@ export default function ProofConveyor({ bare = false }: { bare?: boolean }) {
       ctx.clearRect(0, 0, belt.clientWidth, belt.clientHeight);
       for (let i = 0; i < placed.length; i += 1) {
         const { x, cut } = placed[i];
-        if (cut <= 0) continue;
-        for (let gx = 0; gx < cw; gx += 4) {
+        if (!narrow && cut <= 0) continue;
+        if (narrow && Math.abs(x - leadX) > 2) continue;
+        for (let gx = 0; gx < (narrow ? 36 : cw); gx += 4) {
           const sx = x + gx;
-          const d = sx - Lx;
-          if (d < 0 || d > cw * 0.3) continue;
+          const d = narrow ? gx : sx - Lx;
+          if (d < 0 || d > (narrow ? 36 : cw * 0.3)) continue;
           const p = (1 - d / (cw * 0.3)) ** 1.7;
           for (let gy = 0; gy < ch; gy += 4) {
             if (hash(gx, gy, i) > p * 0.85) continue;
@@ -190,8 +203,8 @@ export default function ProofConveyor({ bare = false }: { bare?: boolean }) {
           <span>Kane</span>
           <b><em ref={countRef}>{CARDS[0].attempts}</em><i ref={pctRef}>{CARDS[0].verdict}</i></b>
         </div>
-        <div className="rx-scan" aria-hidden="true" />
         <div className="rx-belt" ref={beltRef}>
+          <div className="rx-scan" aria-hidden="true" />
           <canvas className="rx-fx" ref={canvasRef} />
           {CARDS.map((card, index) => {
             const photo = index % 2 === 0 && card.id !== "next" ? PHOTOS[index] : "";

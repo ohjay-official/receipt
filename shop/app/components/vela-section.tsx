@@ -36,6 +36,32 @@ export default function VelaSection() {
 
   const row = hoverMid ? FRAMES[frame] : ["$29", "0 / 3", "1 / 3"];
 
+  if (mobile) {
+    return (
+      <section className="rx-vela rx-vela-m" aria-labelledby="why-title">
+        <p className="rx-kicker">Why it exists</p>
+        <h2 id="why-title">A preview can lie. The receipt says so.</h2>
+        <p>Kane is the verdict. The fixer may patch shop source only. The same test runs again, at most three times.</p>
+        <article className="rx-vm">
+          <div className="v-planet" aria-hidden="true" />
+          <div className="rx-vm-pills"><span>run 43698574333</span><span>pull request #3</span></div>
+          <h3>The catch is a real browser on the preview.</h3>
+        </article>
+        <article className="rx-vm">
+          <div className="v-planet is-sphere" aria-hidden="true" />
+          <div className="rx-vm-pills"><span>{row[0]} checkout</span><span>{row[1]} on #4</span><span>{row[2]} attempts</span></div>
+          <h3>Hover reads the real runs, not a sample chart.</h3>
+        </article>
+        <article className="rx-vm">
+          <div className="v-planet is-band" aria-hidden="true" />
+          <div className="rx-vm-rows"><span>Guardrail holds</span><em>working</em></div>
+          <div className="rx-vm-rows is-done"><span>shop/** only</span><em>done</em></div>
+          <h3>Fenced.</h3>
+        </article>
+      </section>
+    );
+  }
+
   return (
     <section className="rx-vela" aria-labelledby="why-title" style={{ height: mobile ? "auto" : 950 * scale }}>
       <div className="rx-vela-canvas" ref={wrapRef} style={mobile ? undefined : { transform: `scale(${scale})` }}>
