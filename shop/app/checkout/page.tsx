@@ -43,7 +43,7 @@ export default function CheckoutPage() {
             <tr className="total-row">
               <th scope="row">Total due today</th>
               <td>
-                <strong className="price wrong" style={{ fontSize: "2rem" }}>
+                <strong className="price" style={{ fontSize: "2rem" }}>
                   {total}
                 </strong>
               </td>
