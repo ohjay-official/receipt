@@ -7,6 +7,7 @@ import {
   COUPON_CODE,
   COUPON_PERCENT,
   normalizeCoupon,
+  NARROW_VIEWPORT_MAX_PX,
   SEED_BLOCK_PAY_ON_MOBILE,
 } from "@/lib/checkout";
 import { CHECKOUT_PRO_USD, formatUsd, PLAN_NAME, PLAN_PERIOD } from "@/lib/prices";
@@ -45,7 +46,7 @@ export default function CheckoutForm() {
 
   function onPay() {
     setPayError("");
-    if (SEED_BLOCK_PAY_ON_MOBILE && typeof window !== "undefined" && window.innerWidth <= 390) {
+    if (SEED_BLOCK_PAY_ON_MOBILE && typeof window !== "undefined" && window.innerWidth <= NARROW_VIEWPORT_MAX_PX) {
       // Overlay should already intercept the click; this is a safety net
       // if the button still receives it at 390px.
       setPayError("Pay could not be reached.");

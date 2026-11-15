@@ -151,25 +151,51 @@ runs:
           echo "kane_exit=2" >> "$GITHUB_OUTPUT"
           exit 0
         fi
+        # A stuck TestMu session can hold the account lock for the whole job.
+        # PR #3's first run waited 30 minutes on "[lock] waiting (concurrent
+        # session)..." and was cancelled as setup, so the fixer never ran.
+        # Fail fast on lock, retry a few times, and never treat a lock as a
+        # test failure. Unique --name avoids colliding with a stale named session.
         set +e
-        kane-cli testmd run "$TEST_FILE" \
-          --agent \
-          --headless \
-          --timeout 300 \
-          --max-steps 40 \
-          --url "$PREVIEW_URL" \
-          --on-lock-conflict wait \
-          --name receipt-checkout \
-          --username "$LT_USERNAME" \
-          --access-key "$LT_ACCESS_KEY" \
-          > kane-out/stream.ndjson \
-          2> kane-out/stderr.log
-        rc=$?
+        rc=2
+        lock_attempts=4
+        for attempt in $(seq 1 "$lock_attempts"); do
+          : > kane-out/stream.ndjson
+          : > kane-out/stderr.log
+          timeout -k 30s 15m kane-cli testmd run "$TEST_FILE" \
+            --agent \
+            --headless \
+            --timeout 300 \
+            --max-steps 40 \
+            --url "$PREVIEW_URL" \
+            --on-lock-conflict fail \
+            --name "receipt-checkout-${GITHUB_RUN_ID:-manual}" \
+            --username "$LT_USERNAME" \
+            --access-key "$LT_ACCESS_KEY" \
+            > kane-out/stream.ndjson \
+            2> kane-out/stderr.log
+          rc=$?
+          if grep -qiE '\[lock\] waiting|lock conflict|concurrent session' kane-out/stderr.log && [ "$attempt" -lt "$lock_attempts" ]; then
+            echo "Kane lock conflict on attempt $attempt/$lock_attempts (exit $rc). Retrying in 90s."
+            sleep 90
+            continue
+          fi
+          break
+        done
         set -e
         # Kane 0.10+ exits 0 when the file has no H2 steps. That is not a verified run.
         if [ -f kane-out/stderr.log ] && grep -qiE 'no steps' kane-out/stderr.log; then
           echo "::error::Kane found no steps in $TEST_FILE (need ## H2 headings). Treating this as setup exit 2, not a pass."
           rc=2
+        fi
+        # A lock or watchdog kill is setup, not a contract failure, so the fixer stays off.
+        if [ -f kane-out/stderr.log ] && grep -qiE '\[lock\] waiting|lock conflict|concurrent session' kane-out/stderr.log; then
+          echo "::error::Kane could not start: a concurrent TestMu session holds the lock."
+          rc=2
+        fi
+        if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; then
+          echo "::error::Kane was stopped after 15 minutes (watchdog exit $rc)."
+          rc=3
         fi
         # Do not cat credentials. stderr is archived; print a short non-secret tail.
         echo "kane_exit=$rc" >> "$GITHUB_OUTPUT"
