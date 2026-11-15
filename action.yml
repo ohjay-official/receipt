@@ -9,7 +9,7 @@ inputs:
   test-file:
     description: Path to the committed Kane _test.md file
     required: false
-    default: tests/checkout_test.md
+    default: tests/receipt_checkout_test.md
   production-url:
     description: Fallback start URL if the preview never returns HTTP 200
     required: false

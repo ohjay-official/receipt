@@ -129,7 +129,7 @@ export function classifyKaneExit(args = {}) {
   return "unknown";
 }
 
-export function readKaneInbox(workspace, testFile = "tests/checkout_test.md") {
+export function readKaneInbox(workspace, testFile = "tests/receipt_checkout_test.md") {
   const resultRel = resultMdPathFromTestFile(testFile);
   const resultPath = path.join(workspace, resultRel);
   const streamPath = path.join(workspace, "kane-out", "stream.ndjson");

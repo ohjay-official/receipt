@@ -3,7 +3,7 @@ import { classifyKaneExit, readKaneInbox } from "./lib/inbox.mjs";
 import { setOutput } from "./lib/github-output.mjs";
 
 const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
-const testFile = process.env.TEST_FILE || "tests/checkout_test.md";
+const testFile = process.env.TEST_FILE || "tests/receipt_checkout_test.md";
 const inbox = readKaneInbox(workspace, testFile);
 const exitClass = classifyKaneExit({
   processExit: process.env.KANE_EXIT,

@@ -59,7 +59,7 @@ Official testmd frontmatter has no viewport or device-width key. `kane-cli confi
 
 ### Honest note: Kane 0.10.4 replay ignores `--url`
 
-`kane-cli testmd run --url` sets the start URL for a **fresh author** run. On **replay**, Kane 0.10.4 ignores `--url` and navigates to the origin baked into `tests/output-checkout/.internal` — the preview that was live when the recording was authored. We found this on pull request #2: replay opened the already-fixed demo alias and false-greened a branch whose checkout was still $29.
+`kane-cli testmd run --url` sets the start URL for a **fresh author** run. On **replay**, Kane 0.10.4 ignores `--url` and navigates to the origin baked into `the committed `tests/output-*/.internal` recordings` — the preview that was live when the recording was authored. We found this on pull request #2: replay opened the already-fixed demo alias and false-greened a branch whose checkout was still $29.
 
 Receipt works around it on **every** run, for any new PR, not just #2: before Kane starts, the action rewrites every recorded Vercel start/navigate origin to the preview under test, and discards a stale committed `Result.md` so a previous pass cannot classify this run.
 
@@ -70,7 +70,7 @@ Receipt works around it on **every** run, for any new PR, not just #2: before Ka
 On a public GitHub repo deployed to Vercel (Deployment Protection off so Kane sees the app, not a login wall):
 
 1. Add repository secrets `LT_USERNAME`, `LT_ACCESS_KEY`, and — if you want the fixer — `GEMINI_API_KEY` plus `RECEIPT_GIT_TOKEN` (a fine-grained PAT of the Vercel Hobby owner, Contents: write, so Hobby will actually deploy the fixer push).
-2. Copy `tests/checkout_test.md` and this How-to-test block, then add:
+2. Copy `tests/receipt_checkout_test.md` and this How-to-test block, then add:
 
 ```yaml
 # .github/workflows/receipt.yml
@@ -108,7 +108,7 @@ jobs:
           token: ${{ secrets.RECEIPT_GIT_TOKEN || github.token }}
       - uses: ohjay-official/receipt@main
         with:
-          test-file: tests/checkout_test.md
+          test-file: tests/receipt_checkout_test.md
           username: ${{ secrets.LT_USERNAME }}
           access-key: ${{ secrets.LT_ACCESS_KEY }}
           gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
@@ -119,10 +119,10 @@ jobs:
 The Kane command the action runs:
 
 ```bash
-kane-cli testmd run tests/checkout_test.md   --agent --headless --timeout 300 --max-steps 40   --url "$PREVIEW_URL"   --name receipt-checkout   --username "$LT_USERNAME" --access-key "$LT_ACCESS_KEY"
+kane-cli testmd run tests/receipt_checkout_test.md   --agent --headless --timeout 300 --max-steps 40   --url "$PREVIEW_URL"   --name receipt-checkout   --username "$LT_USERNAME" --access-key "$LT_ACCESS_KEY"
 ```
 
-`--url` is the start URL for a fresh author run. Unchanged steps replay from the committed `tests/output-checkout/` recordings. Because Kane 0.10.4 replay ignores `--url` (see the honest note above), Receipt remaps those recordings onto the current preview before each run.
+`--url` is the start URL for a fresh author run. When `tests/output-receipt_checkout/` recordings are committed, unchanged steps replay from them. Because Kane 0.10.4 replay ignores `--url` (see the honest note above), Receipt remaps those recordings onto the current preview before each run. The original `tests/output-checkout/` recordings were removed after a stale Test Manager write lock on that test id blocked PR #3 for over 50 minutes; the next live run authors a new test. Recordings will be committed again after a successful authoring.
 
 ---
 
@@ -160,7 +160,7 @@ This project is built to stay on **$0**: Kane’s free 10,000-credit grant, GitH
 
 - `action.yml` / `src/` — the composite Receipt action
 - `shop/` — Next.js fixture (`/pricing` $19, `/checkout` $29)
-- `tests/checkout_test.md` — the Kane contract
+- `tests/receipt_checkout_test.md` — the Kane contract
 - `.github/workflows/receipt.yml` — demo workflow (`pull_request` / `repository_dispatch` / `deployment_status` / `workflow_dispatch`)
 - `.github/workflows/ci.yml` — unit tests and `next build`
 - `docs/` — brief, spec, plan, research pack
