@@ -180,6 +180,25 @@ input:focus-visible {
 
 .btn-nav:hover { background: #2c261f; color: var(--page); }
 
+/* .nav a (color, padding, border) out-specifies .btn and .btn-nav. */
+.nav a.btn-nav {
+  color: var(--page);
+  background: var(--ink);
+  padding: 0 16px;
+  height: 36px;
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-ctrl);
+  margin-left: 8px;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.nav a.btn-nav:hover {
+  color: var(--page);
+  background: #2c261f;
+  border-color: #2c261f;
+}
+
 /* Footer */
 
 .site-footer {
@@ -786,6 +805,14 @@ html.is-narrow .pay-blocker {
     align-self: flex-start;
     width: auto;
     margin-top: 8px;
+  }
+  .nav a.btn-nav {
+    margin: 8px 0 0;
+    height: 36px;
+    padding: 0 16px;
+    border: 1px solid var(--ink);
+    color: var(--page);
+    background: var(--ink);
   }
   .site-header { position: relative; }
   .home-hero, .split, .path-grid, .docs-shell, .catalog, .proof-list li, .site-footer-inner {

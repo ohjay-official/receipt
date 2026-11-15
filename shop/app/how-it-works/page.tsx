@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PR1, PR3, PR4, PR5 } from "@/lib/site";
 
 export const metadata: Metadata = { title: "How it works" };
 
@@ -30,7 +31,7 @@ export default function HowItWorksPage() {
   return (
     <main>
       <div className="wrap">
-        <header className="page-hero">
+        <header className="m-page-hero">
           <p className="label">The loop</p>
           <h1>From a lying preview to a receipt</h1>
           <p className="lede">
@@ -67,6 +68,62 @@ export default function HowItWorksPage() {
             {" · "}
             <Link href="/docs/limitations">Honest limitations</Link>
           </p>
+        </section>
+        <section className="m-record">
+          <h2>Runs still open</h2>
+          <p className="lede">
+            None of these pull requests should be merged. Production on main
+            keeps the seeded bugs.
+          </p>
+          <ol className="proof-list">
+            <li>
+              <p className="run-id">PR #1</p>
+              <div>
+                <h3>First live loop</h3>
+                <p>Red run, then receipt-fix: 1 at {PR1.fixSha}, then a green re-verify.</p>
+                <p className="links">
+                  <a href={PR1.url}>Pull request</a>
+                  <a href={PR1.fixUrl}>{PR1.fixSha}</a>
+                  <a href={PR1.greenRun}>Green run</a>
+                </p>
+              </div>
+            </li>
+            <li>
+              <p className="run-id">PR #3</p>
+              <div>
+                <h3>Three bugs, attempt 1 of 3</h3>
+                <p>Fix {PR3.fixSha} touched shop/lib/prices.ts and shop/lib/checkout.ts only.</p>
+                <p className="links">
+                  <a href={PR3.url}>Pull request</a>
+                  <a href={PR3.fixUrl}>{PR3.fixSha}</a>
+                  <a href={PR3.greenRun}>Green run</a>
+                </p>
+              </div>
+            </li>
+            <li>
+              <p className="run-id">PR #4</p>
+              <div>
+                <h3>Guardrail refused the cheat</h3>
+                <p>{PR4.note}. Nothing was pushed. Run 43700368892.</p>
+                <p className="links">
+                  <a href={PR4.url}>Pull request</a>
+                  <a href={PR4.run}>Actions run</a>
+                </p>
+              </div>
+            </li>
+            <li>
+              <p className="run-id">PR #5</p>
+              <div>
+                <h3>Same loop after the site rebuild</h3>
+                <p>Red run 43701888824, fix {PR5.fixSha}, green run 43702361655. Attempts {PR5.attempts}.</p>
+                <p className="links">
+                  <a href={PR5.url}>Pull request</a>
+                  <a href={PR5.fixUrl}>{PR5.fixSha}</a>
+                  <a href={PR5.greenRun}>Green run</a>
+                </p>
+              </div>
+            </li>
+          </ol>
         </section>
       </div>
     </main>

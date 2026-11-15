@@ -1,7 +1,23 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { NAV, REPO_URL, SITE_NAME, TAGLINE } from "@/lib/site";
+import MarketingFooter from "./marketing-footer";
+
+function isShopPath(pathname: string) {
+  return (
+    pathname === "/shop" ||
+    pathname.startsWith("/shop/") ||
+    pathname === "/pricing" ||
+    pathname === "/checkout"
+  );
+}
 
 export default function SiteFooter() {
+  const pathname = usePathname() || "/";
+  if (!isShopPath(pathname)) return <MarketingFooter />;
+
   return (
     <footer className="site-footer">
       <div className="site-footer-inner">

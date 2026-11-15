@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import ReceiptSlip from "../components/receipt-slip";
-import { EARLIER, KANE_STEPS_RED, PR3, PR4, PRODUCTION_URL } from "@/lib/site";
+import { EARLIER, KANE_STEPS_RED, PR1, PR3, PR4, PR5, PRODUCTION_URL } from "@/lib/site";
 
 export const metadata: Metadata = { title: "Proof" };
 
@@ -8,7 +8,7 @@ export default function ProofPage() {
   return (
     <main>
       <div className="wrap">
-        <header className="page-hero">
+        <header className="m-page-hero">
           <p className="label">Proof</p>
           <h1>What Kane actually ran</h1>
           <p className="lede">
@@ -105,16 +105,39 @@ export default function ProofPage() {
             </div>
           </li>
           <li>
+            <p className="run-id">PR #5 · 43701888824</p>
+            <div>
+              <h3>Same loop after the site rebuild</h3>
+              <p>
+                Red catch, then receipt-fix: 1 ({PR5.fixSha}) on shop/lib/prices.ts
+                and shop/lib/checkout.ts only. Green re-verify passed all five
+                steps. Attempts {PR5.attempts}.
+              </p>
+              <p className="links">
+                <a href={PR5.url}>Pull request</a>
+                <a href={PR5.redRun}>Red run</a>
+                <a href={PR5.redEvidence}>Red evidence</a>
+                <a href={PR5.fixUrl}>{PR5.fixSha}</a>
+                <a href={PR5.greenRun}>Green run</a>
+                <a href={PR5.greenEvidence}>Green evidence</a>
+                <a href={PR5.preview}>Fixed preview</a>
+              </p>
+            </div>
+          </li>
+          <li>
             <p className="run-id">Earlier</p>
             <div>
               <h3>First loops, still open</h3>
               <p>
-                Pull request #1 was the first live Kane catch. Pull request #2 closed
-                the autonomous loop with receipt-fix: 1 (e7542b0). They stay as
-                earlier evidence.
+                Pull request #1 was the first live Kane catch, with receipt-fix: 1
+                ({PR1.fixSha}). Pull request #2 closed the autonomous loop with
+                receipt-fix: 1 (e7542b0). They stay as earlier evidence.
               </p>
               <p className="links">
-                <a href={EARLIER.pr1}>Pull request #1</a>
+                <a href={PR1.url}>Pull request #1</a>
+                <a href={PR1.fixUrl}>{PR1.fixSha}</a>
+                <a href={PR1.redRun}>Red run</a>
+                <a href={PR1.greenRun}>Green run</a>
                 <a href={EARLIER.pr2}>Pull request #2</a>
                 <a href={EARLIER.pr2Fix}>e7542b0</a>
               </p>

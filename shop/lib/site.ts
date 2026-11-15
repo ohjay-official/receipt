@@ -63,3 +63,93 @@ export const KANE_STEPS_RED = [
   { status: "skipped" as const, label: "LAUNCH10 takes 10% off Pro" },
   { status: "skipped" as const, label: "Pay works in the phone layout" },
 ];
+
+export const HACKATHON_URL = "https://luma.com/kanecli-online-hackathon";
+
+export const PR1 = {
+  url: "https://github.com/ohjay-official/receipt/pull/1",
+  redRun: "https://github.com/ohjay-official/receipt/actions/runs/43683895636",
+  greenRun: "https://github.com/ohjay-official/receipt/actions/runs/43684482513",
+  fixSha: "9492501",
+  fixUrl: "https://github.com/ohjay-official/receipt/commit/9492501",
+};
+
+export const PR5 = {
+  url: "https://github.com/ohjay-official/receipt/pull/5",
+  preview: "https://receipt-git-demo-t12-site-loop-oh-jay-s-projects.vercel.app",
+  redRun: "https://github.com/ohjay-official/receipt/actions/runs/43701888824",
+  redEvidence:
+    "https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14157390481",
+  fixSha: "55b2815",
+  fixUrl: "https://github.com/ohjay-official/receipt/commit/55b2815",
+  greenRun: "https://github.com/ohjay-official/receipt/actions/runs/43702361655",
+  greenEvidence:
+    "https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14156718986",
+  attempts: "1 / 3",
+};
+
+export type BeltVerdict = "passed" | "refused";
+
+/** Home proof belt. Every figure is from a real run. */
+export const BELT = [
+  {
+    id: "pr1",
+    title: "Pull request #1",
+    href: PR1.url,
+    lines: ["First live loop", "Checkout charged $29", "Red run 43683895636"],
+    verdict: "passed" as BeltVerdict,
+    attempts: "receipt-fix: 1",
+    commit: PR1.fixSha,
+    note: "Green run 43684482513",
+    links: [
+      { label: "Pull request", href: PR1.url },
+      { label: PR1.fixSha, href: PR1.fixUrl },
+      { label: "Green run", href: PR1.greenRun },
+    ],
+  },
+  {
+    id: "pr3",
+    title: "Pull request #3",
+    href: PR3.url,
+    lines: ["Checkout showed $29", "Coupon and Pay skipped", "Red run 43698574333"],
+    verdict: "passed" as BeltVerdict,
+    attempts: PR3.attempts,
+    commit: PR3.fixSha,
+    note: "Green run 43699955024",
+    links: [
+      { label: "Pull request", href: PR3.url },
+      { label: PR3.fixSha, href: PR3.fixUrl },
+      { label: "Green run", href: PR3.greenRun },
+    ],
+  },
+  {
+    id: "pr4",
+    title: "Pull request #4",
+    href: PR4.url,
+    lines: ["Checkout failed at $29", "Proposed a test-file edit", "Run 43700368892"],
+    verdict: "refused" as BeltVerdict,
+    attempts: "0 / 3",
+    commit: "nothing pushed",
+    note: PR4.note,
+    links: [
+      { label: "Pull request", href: PR4.url },
+      { label: "Run", href: PR4.run },
+      { label: "Evidence", href: PR4.evidence },
+    ],
+  },
+  {
+    id: "pr5",
+    title: "Pull request #5",
+    href: PR5.url,
+    lines: ["Loop after the rebuild", "Red run 43701888824", "Fix 55b2815"],
+    verdict: "passed" as BeltVerdict,
+    attempts: PR5.attempts,
+    commit: PR5.fixSha,
+    note: "Green run 43702361655",
+    links: [
+      { label: "Pull request", href: PR5.url },
+      { label: PR5.fixSha, href: PR5.fixUrl },
+      { label: "Green run", href: PR5.greenRun },
+    ],
+  },
+] as const;

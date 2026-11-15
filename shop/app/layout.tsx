@@ -4,6 +4,7 @@ import SiteHeader from "./components/site-header";
 import SiteFooter from "./components/site-footer";
 import { SITE_NAME, TAGLINE } from "@/lib/site";
 import "./globals.css";
+import "./marketing.css";
 
 const serif = Newsreader({
   subsets: ["latin"],

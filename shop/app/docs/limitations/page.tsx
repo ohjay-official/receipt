@@ -22,7 +22,7 @@ export default function LimitationsPage() {
         <code>kane-cli config set-window</code> rejects widths under 800px. Kane
         “mobile” targets are native apps, not a Chrome phone viewport, and{" "}
         <code>--remote</code> is out of scope on a $0 budget. In CI, Chrome is
-        1920px and exposes no window-resize action — a “resize to 800px” step
+        1920px and exposes no window-resize action. A “resize to 800px” step
         failed as an environment issue and never clicked Pay.
       </p>
       <p>
