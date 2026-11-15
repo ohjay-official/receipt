@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Docs" };
 
 export default function DocsIndexPage() {
   return (
-    <article className="prose">
+    <article className="prose rx-doc">
       <p className="label">Docs</p>
       <h1>Set the contract, then let Kane read it</h1>
       <p>
@@ -20,31 +20,13 @@ export default function DocsIndexPage() {
         contract if you want to see exactly what Kane checks on this shop. The
         limitations page is honest about Kane replay and the phone-layout control.
       </p>
-      <h2>In these pages</h2>
-      <p>
-        <Link href="/docs/install">Install</Link> covers the secrets, the
-        production URL variable, and the workflow that waits for the Vercel
-        commit status.
-      </p>
-      <p>
-        <Link href="/docs/contract">The contract</Link> is the How-to-test
-        block Kane is required to follow, including the three seeded bugs on
-        main.
-      </p>
-      <p>
-        <Link href="/docs/configuration">Configuration</Link> lists action
-        inputs, retries, and how Receipt finds the preview URL.
-      </p>
-      <p>
-        <Link href="/docs/guardrails">Guardrails</Link> is the allowlist: shop
-        application source only, no test or contract edits, no weakening of
-        advertised prices.
-      </p>
-      <p>
-        <Link href="/docs/limitations">Limitations</Link> records that Kane
-        0.10.4 replay ignores <code>--url</code>, that CI Chrome cannot resize
-        to a phone, and how the in-page Phone layout control covers that gap.
-      </p>
+      <div className="rx-doc-cards">
+        <Link href="/docs/install"><strong>Install</strong><span>Secrets, the production URL variable, and the workflow that waits for the Vercel commit status.</span></Link>
+        <Link href="/docs/contract"><strong>The contract</strong><span>The How-to-test block Kane follows, including the three seeded bugs on main.</span></Link>
+        <Link href="/docs/configuration"><strong>Configuration</strong><span>Action inputs, retries, and how Receipt finds the preview URL.</span></Link>
+        <Link href="/docs/guardrails"><strong>Guardrails</strong><span>Shop application source only. No test or contract edits. No weakening of advertised prices.</span></Link>
+        <Link href="/docs/limitations"><strong>Limitations</strong><span>Kane 0.10.4 replay ignores --url. CI Chrome cannot resize to a phone. The in-page Phone layout control covers that gap.</span></Link>
+      </div>
     </article>
   );
 }

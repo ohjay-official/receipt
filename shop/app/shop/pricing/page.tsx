@@ -11,6 +11,7 @@ export default function PricingPage() {
   return (
     <main>
       <div className="shop-wrap shop-page">
+        <div className="shop-band" style={{ backgroundImage: "url(https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/2bebad68-8177-446a-9550-d64074166364.webp)" }} aria-hidden="true" />
         <DemoBanner />
         <p className="label">Membership</p>
         <h1>Plans</h1>

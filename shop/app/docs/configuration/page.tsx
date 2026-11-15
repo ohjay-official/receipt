@@ -4,7 +4,7 @@ export const metadata: Metadata = { title: "Configuration" };
 
 export default function ConfigurationPage() {
   return (
-    <article className="prose">
+    <article className="prose rx-doc">
       <p className="label">Docs</p>
       <h1>Configuration</h1>
       <p>The action inputs and the workflow environment that matter in this repo:</p>

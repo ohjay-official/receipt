@@ -1,15 +1,16 @@
 import Link from "next/link";
-import RxNav from "./rx-nav";
+import SiteMenu from "./site-menu";
+import StableVideo from "./stable-video";
 
 const JET = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_091828_e240eb17-6edc-4129-ad9d-98678e3fd238.mp4";
 
 export default function SkyHero() {
   return (
     <section className="rx-hero" aria-labelledby="rx-hero-title">
-      <video className="rx-hero-video" autoPlay muted loop playsInline src={JET} />
+      <StableVideo className="rx-hero-video" src={JET} poster="/hero/jet-poster.jpg" />
       <div className="rx-hero-shade" />
       <div className="rx-hero-wrap">
-        <RxNav />
+        <SiteMenu overlay />
         <div className="rx-hero-main">
           <div className="rx-hero-copy">
             <p className="rx-kicker">GitHub Action</p>

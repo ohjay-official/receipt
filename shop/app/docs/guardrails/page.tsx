@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Guardrails" };
 
 export default function GuardrailsPage() {
   return (
-    <article className="prose">
+    <article className="prose rx-doc">
       <p className="label">Docs</p>
       <h1>Guardrails</h1>
       <p>

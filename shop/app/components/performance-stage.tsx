@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import StableVideo from "./stable-video";
 
 const WIDE = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260826_125226_45cb4f38-aa7e-47e1-885d-ae0b69745369.mp4";
 const WIDE_POSTER = "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/5c3ec08f-2dbf-4c0a-8588-f6106a789443.webp";
@@ -134,11 +135,28 @@ function DotWord({ word }: { word: string }) {
   return <span className="rx-dot-word" ref={ref} aria-label={word} />;
 }
 
+function StageFilm() {
+  const [narrow, setNarrow] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px)");
+    const apply = () => setNarrow(query.matches);
+    apply();
+    query.addEventListener("change", apply);
+    return () => query.removeEventListener("change", apply);
+  }, []);
+  return (
+    <StableVideo
+      className="rx-stage-video"
+      src={narrow ? NARROW : WIDE}
+      poster={narrow ? NARROW_POSTER : WIDE_POSTER}
+    />
+  );
+}
+
 export default function PerformanceStage() {
   return (
     <section className="rx-stage" aria-label="How it works">
-      <video className="rx-stage-video stage-motion stage-motion--wide" autoPlay muted loop playsInline preload="auto" poster={WIDE_POSTER} src={WIDE} />
-      <video className="rx-stage-video stage-motion stage-motion--narrow" autoPlay muted loop playsInline preload="none" poster={NARROW_POSTER} src={NARROW} />
+      <StageFilm />
       <div className="rx-stage-still" style={{ background: `linear-gradient(rgba(236,236,234,.10), rgba(236,236,234,.10)), url(${WIDE_POSTER}) center / cover no-repeat` }} />
       <div className="rx-masthead">
         <h2 className="rx-headline">
@@ -152,7 +170,7 @@ export default function PerformanceStage() {
       <div className="rx-cards">
         {CARDS.map((card, index) => (
           <Link key={card.metric} className="rx-card" href={card.href}>
-            <video className="rx-card-media" autoPlay muted loop playsInline preload="auto" poster={card.poster} src={card.video} />
+            <StableVideo className="rx-card-media" poster={card.poster} src={card.video} />
             {index === 0 ? <Gauge /> : null}
             {index === 1 ? <TileWall /> : null}
             {index === 2 ? <ConnectionMap /> : null}

@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "The contract" };
 
 export default function ContractPage() {
   return (
-    <article className="prose">
+    <article className="prose rx-doc">
       <p className="label">Docs</p>
       <h1>The How-to-test contract</h1>
       <p>

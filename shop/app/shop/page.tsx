@@ -11,6 +11,7 @@ export default function ShopCatalogPage() {
   return (
     <main>
       <div className="shop-wrap shop-page">
+        <div className="shop-band" style={{ backgroundImage: "url(https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/0e201fcd-ffc0-46a0-bd06-faa07bf0e84b.webp)" }} aria-hidden="true" />
         <DemoBanner />
         <p className="label">{SHOP_NAME}</p>
         <h1>A small press shop</h1>

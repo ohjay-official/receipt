@@ -5,6 +5,7 @@ import { SITE_NAME, TAGLINE } from "@/lib/site";
 import "./globals.css";
 import "./marketing.css";
 import "./strict.css";
+import "./pages.css";
 
 const serif = Newsreader({
   subsets: ["latin"],

@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <main>
-      <div className="wrap not-found">
+      <div className="wrap rx-not-found">
         <p className="label">404</p>
         <h1>This page is not on the slip</h1>
         <p className="lede">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PR1, PR3, PR4, PR5 } from "@/lib/site";
+import PageHero from "../components/page-hero";
+import { BELT, PR4 } from "@/lib/site";
 
 export const metadata: Metadata = { title: "How it works" };
 
@@ -27,105 +28,71 @@ const STEPS = [
   },
 ];
 
+const PHOTOS = [
+  "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/0e201fcd-ffc0-46a0-bd06-faa07bf0e84b.webp",
+  "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/e80ba08d-d7b6-4b27-b0cd-8d0ad09c788c.webp",
+  "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/2bebad68-8177-446a-9550-d64074166364.webp",
+  "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/62b0d7c1-3eb7-44bd-9b19-57b975fb250f.webp",
+];
+
 export default function HowItWorksPage() {
+  const shown = BELT.filter((card) => card.id !== "pr2");
   return (
     <main>
-      <div className="wrap">
-        <header className="m-page-hero">
-          <p className="label">The loop</p>
-          <h1>From a lying preview to a receipt</h1>
-          <p className="lede">
-            Receipt is a composite GitHub Action in this repository. It does not
-            replace Kane. It starts Kane, pins what Kane saw, and, when the contract
-            fails, offers one tightly fenced patch.
-          </p>
-        </header>
-        <ol className="loop">
-          {STEPS.map((step) => (
+      <PageHero
+        kicker="The loop"
+        title="From a lying preview to a receipt"
+        lede="Receipt is a composite GitHub Action in this repository. It does not replace Kane. It starts Kane, pins what Kane saw, and, when the contract fails, offers one tightly fenced patch."
+      />
+      <section className="rx-inner-section">
+        <ol className="rx-step-cards">
+          {STEPS.map((step, index) => (
             <li key={step.title}>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.body}</p>
-              </div>
+              <span className="rx-step-n">0{index + 1}</span>
+              <h2>{step.title}</h2>
+              <p>{step.body}</p>
             </li>
           ))}
         </ol>
-        <section className="section prose">
-          <h2>Guardrails in the loop</h2>
+      </section>
+      <section className="rx-inner-section">
+        <h2>Guardrails in the loop</h2>
+        <div className="rx-glass">
           <p>
-            Before a fixer push, Receipt validates the diff. A patch that leaves{" "}
-            <code>shop/**</code>, including shop unit tests, or that weakens the Kane
-            steps or the advertised $19 Pro price, is refused and never pushed. The
-            receipt card says why, as on{" "}
-            <Link href="/proof">the refused-cheat pull request</Link>.
+            Before a fixer push, Receipt validates the diff. A patch that leaves shop/**, including shop unit tests, or that weakens the Kane steps or the advertised $19 Pro price, is refused and never pushed. The receipt card says why, as on the refused-cheat pull request.
           </p>
-          <p>
-            Production on <code>main</code> keeps the seeded bugs on purpose. Demo
-            pull requests stay open as evidence. They are not merged.
+          <p style={{ marginTop: 16 }}>
+            Production on main keeps the seeded bugs on purpose. Demo pull requests stay open as evidence. They are not merged.
           </p>
-          <p>
+          <p className="rx-run-links">
             <Link href="/docs/guardrails">Read the guardrails in full</Link>
-            {" · "}
             <Link href="/docs/limitations">Honest limitations</Link>
+            <a href={PR4.url}>Pull request #4</a>
           </p>
-        </section>
-        <section className="m-record">
-          <h2>Runs still open</h2>
-          <p className="lede">
-            None of these pull requests should be merged. Production on main
-            keeps the seeded bugs.
-          </p>
-          <ol className="proof-list">
-            <li>
-              <p className="run-id">PR #1</p>
+        </div>
+      </section>
+      <section className="rx-inner-section">
+        <h2>Runs still open</h2>
+        <p className="lede" style={{ fontSize: 18, color: "#4b5563", marginTop: 0 }}>
+          None of these pull requests should be merged. Production on main keeps the seeded bugs.
+        </p>
+        <div className="rx-run-grid">
+          {shown.map((card, index) => (
+            <article key={card.id} className="rx-run-card">
+              <img src={PHOTOS[index % PHOTOS.length]} alt="" />
               <div>
-                <h3>First live loop</h3>
-                <p>Red run, then receipt-fix: 1 at {PR1.fixSha}, then a green re-verify.</p>
-                <p className="links">
-                  <a href={PR1.url}>Pull request</a>
-                  <a href={PR1.fixUrl}>{PR1.fixSha}</a>
-                  <a href={PR1.greenRun}>Green run</a>
+                <h3>{card.title}</h3>
+                <p>{card.lines.join(". ")}. Attempts {card.attempts}. {card.note}.</p>
+                <p className="rx-run-links">
+                  {card.links.map((link) => (
+                    <a key={link.href} href={link.href}>{link.label}</a>
+                  ))}
                 </p>
               </div>
-            </li>
-            <li>
-              <p className="run-id">PR #3</p>
-              <div>
-                <h3>Three bugs, attempt 1 of 3</h3>
-                <p>Fix {PR3.fixSha} touched shop/lib/prices.ts and shop/lib/checkout.ts only.</p>
-                <p className="links">
-                  <a href={PR3.url}>Pull request</a>
-                  <a href={PR3.fixUrl}>{PR3.fixSha}</a>
-                  <a href={PR3.greenRun}>Green run</a>
-                </p>
-              </div>
-            </li>
-            <li>
-              <p className="run-id">PR #4</p>
-              <div>
-                <h3>Guardrail refused the cheat</h3>
-                <p>{PR4.note}. Nothing was pushed. Run 43700368892.</p>
-                <p className="links">
-                  <a href={PR4.url}>Pull request</a>
-                  <a href={PR4.run}>Actions run</a>
-                </p>
-              </div>
-            </li>
-            <li>
-              <p className="run-id">PR #5</p>
-              <div>
-                <h3>Same loop after the site rebuild</h3>
-                <p>Red run 43701888824, fix {PR5.fixSha}, green run 43702361655. Attempts {PR5.attempts}.</p>
-                <p className="links">
-                  <a href={PR5.url}>Pull request</a>
-                  <a href={PR5.fixUrl}>{PR5.fixSha}</a>
-                  <a href={PR5.greenRun}>Green run</a>
-                </p>
-              </div>
-            </li>
-          </ol>
-        </section>
-      </div>
+            </article>
+          ))}
+        </div>
+      </section>
     </main>
   );
 }

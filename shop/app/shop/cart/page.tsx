@@ -11,6 +11,7 @@ export default function CartPage() {
   return (
     <main>
       <div className="shop-wrap shop-page">
+        <div className="shop-band" style={{ backgroundImage: "url(https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/62b0d7c1-3eb7-44bd-9b19-57b975fb250f.webp)" }} aria-hidden="true" />
         <DemoBanner />
         <p className="label">Cart</p>
         <h1>Ready for checkout</h1>

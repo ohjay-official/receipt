@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Install" };
 
 export default function InstallPage() {
   return (
-    <article className="prose">
+    <article className="prose rx-doc">
       <p className="label">Docs</p>
       <h1>Install</h1>
       <p>

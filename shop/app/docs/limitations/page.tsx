@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Limitations" };
 
 export default function LimitationsPage() {
   return (
-    <article className="prose">
+    <article className="prose rx-doc">
       <p className="label">Docs</p>
       <h1>Limitations</h1>
       <h2>Kane 0.10.4 replay ignores --url</h2>

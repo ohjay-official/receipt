@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { HACKATHON_URL, REPO_URL } from "@/lib/site";
+import StableVideo from "./stable-video";
 
 const GLOW = "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/4a917d4c-123f-4b68-8125-b201961b7791.jpg";
 const LOOP = "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/a8f60da5-538f-403a-a812-6be0f098e319.mp4";
@@ -16,7 +17,8 @@ export default function VantixFooter() {
   return (
     <footer className="vx">
       <img className="vx-glow" src={GLOW} alt="" />
-      <video className="vx-video" autoPlay muted loop playsInline src={LOOP} />
+      <StableVideo className="vx-video" src={LOOP} poster={GLOW} />
+      <div className="vx-video-fade" aria-hidden="true" />
       <div className="vx-ui" aria-hidden={false}>
         <svg className="vx-svg" viewBox="0 0 1326 1186" role="img" aria-label="Receipt">
           <defs>

@@ -1,6 +1,9 @@
 /* Marketing chrome only. Shop routes never get .rx. */
 
+html { overflow-x: clip; }
+
 .rx {
+  overflow-x: clip;
   --rx-ink: #202a36;
   --rx-ink-hover: #1a2229;
   --rx-gray-500: #6b7280;
@@ -81,8 +84,7 @@
   display: none;
   margin: 0 16px 16px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.98);
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(32, 42, 54, 0.08);
 }
@@ -104,8 +106,9 @@
 /* Hero */
 .rx-hero {
   position: relative;
-  height: 100vh;
-  min-height: 640px;
+  height: 100svh;
+  min-height: 100svh;
+  max-height: 100svh;
   overflow: hidden;
   background: var(--rx-paper);
   color: var(--rx-ink);
@@ -116,6 +119,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 .rx-hero-shade {
   position: absolute;
@@ -330,6 +335,8 @@
   height: 100%;
   object-fit: cover;
   pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 .rx-stage-still { display: none; }
 .stage-motion--narrow { display: none; }
@@ -401,8 +408,10 @@
   z-index: 0;
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: cover;
   pointer-events: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 .rx-gauge { position: absolute; z-index: 2; top: 27.63%; left: 10.5%; width: 79%; height: 59%; overflow: visible; }
 .rx-tiles { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; }
@@ -721,7 +730,7 @@
 
 /* Install */
 .rx-install { padding: 120px 24px; background: var(--rx-paper); }
-.rx-install-grid { width: min(1120px, 100%); margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 32px; align-items: start; }
+.rx-install-grid { width: min(1120px, 100%); margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; align-items: start; min-width: 0; }
 .rx-slip { background: var(--rx-white); border-radius: 16px; border: 1px solid var(--rx-line); box-shadow: 0 8px 24px rgba(32, 42, 54, 0.06); }
 .rx-tear { width: 100%; height: 44px; border: 0; border-bottom: 1px dashed rgba(32,42,54,0.28); background: transparent; color: var(--rx-gray-600); cursor: pointer; font: inherit; }
 .rx-slip-body { padding: 20px 22px 24px; transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1); }
@@ -729,7 +738,7 @@
 .rx-slip h3 { margin: 4px 0 12px; font-size: 32px; }
 .rx-slip-lines { list-style: none; margin: 0; padding: 0; }
 .rx-slip-lines li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px dashed var(--rx-line); font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px; }
-.rx-yaml { margin: 16px 0 0; max-height: 240px; overflow: auto; background: var(--rx-paper); border-radius: 12px; padding: 12px; font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px; line-height: 18px; white-space: pre; color: var(--rx-gray-600); }
+.rx-yaml { margin: 16px 0 0; max-height: 240px; max-width: 100%; min-width: 0; overflow: auto; background: var(--rx-paper); border-radius: 12px; padding: 12px; font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px; line-height: 18px; white-space: pre; color: var(--rx-gray-600); }
 .rx-total { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--rx-ink); font-size: 22px; }
 @media (min-width: 900px) {
   .rx-install-grid { grid-template-columns: 1fr 440px; gap: 64px; }
@@ -746,16 +755,21 @@
   --u: min(100cqw / 1326, clamp(1px, 100cqw / 2200, 1.16px), 100svh / 1186);
   --x0: calc((100cqw - 1326 * var(--u)) / 2);
 }
-.vx-glow, .vx-video {
+.vx-glow, .vx-video, .vx-video-fade {
   position: absolute; left: 0; top: 0; width: 100%;
   height: calc(558 * var(--u));
-  object-fit: fill;
+  object-fit: cover;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(#000 0 82%, transparent 100%);
-  mask-image: linear-gradient(#000 0 82%, transparent 100%);
 }
-.vx-video { z-index: 1; opacity: 0; animation: vx-fade .9s ease forwards; }
-@keyframes vx-fade { to { opacity: 1; } }
+.vx-video {
+  z-index: 1;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.vx-video-fade {
+  z-index: 2;
+  background: linear-gradient(to bottom, rgba(32, 42, 54, 0) 62%, #202a36 100%);
+}
 .vx-ui { position: absolute; inset: 0; z-index: 2; }
 .vx-svg { position: absolute; left: var(--x0); top: 0; width: calc(1326 * var(--u)); height: calc(1186 * var(--u)); overflow: visible; }
 .vx-copy, .vx-col, .vx-follow, .vx-copyline, .vx-social, .vx-cta {
@@ -792,7 +806,8 @@
 @media (max-width: 959px) {
   .vx-ui { display: none; }
   .vx { height: auto; min-height: 100svh; display: flex; flex-direction: column; }
-  .vx-glow, .vx-video { position: relative; height: 34svh; object-fit: cover; }
+  .vx-glow, .vx-video, .vx-video-fade { position: relative; height: 220px; object-fit: cover; }
+  .vx-video-fade { position: absolute; left: 0; right: 0; bottom: auto; top: 0; height: 220px; }
   .vx-phone { display: block; position: relative; z-index: 3; padding: 8px 20px 28px; margin-top: -48px; }
   .vx-phone .rx-word { font-size: clamp(56px, 16vw, 88px); margin: 0 0 12px; }
   .vx-phone nav { display: grid; gap: 4px; margin-top: 16px; }
