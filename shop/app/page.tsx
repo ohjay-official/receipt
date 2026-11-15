@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: `${SHOP_NAME} — Press supplies`,
 };
 
+// Auto-trigger proof branch: leave the seeded $29 checkout unchanged.
 export default function HomePage() {
   return (
     <main>
