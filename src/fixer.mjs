@@ -1,0 +1,156 @@
+#!/usr/bin/env node
+import { execFileSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
+import { countFixAttempts, capReached } from "./lib/attempts.mjs";
+import { readKaneInbox, extractHowToTest } from "./lib/inbox.mjs";
+import { proposeFix, applyFiles } from "./lib/fixer.mjs";
+import { findPullRequest } from "./lib/github-api.mjs";
+import { DEFAULT_DENYLIST, assertAllowlisted } from "./lib/path-guard.mjs";
+import { redact, setOutput } from "./lib/github-output.mjs";
+
+const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
+const testFile = process.env.TEST_FILE || "tests/checkout_test.md";
+const maxFixes = Number(process.env.MAX_FIXES || 3);
+const allowlist = (process.env.ALLOWLIST || "shop/**")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+function git(args, opts = {}) {
+  try {
+    return execFileSync("git", args, {
+      cwd: workspace,
+      encoding: "utf8",
+      stdio: opts.stdio || ["ignore", "pipe", "pipe"],
+      env: opts.env || process.env,
+    });
+  } catch (err) {
+    const msg = redact(err.stderr || err.message || String(err));
+    const wrapped = new Error(msg);
+    throw wrapped;
+  }
+}
+
+async function main() {
+  const exitClass = process.env.EXIT_CLASS || "fail";
+  if (exitClass !== "fail") {
+    console.log(`Skipping fixer (exit class ${exitClass}).`);
+    setOutput("fixer_status", "skipped");
+    return;
+  }
+
+  const log = git(["log", "--pretty=%s"]);
+  const attempts = Number(process.env.ATTEMPTS || countFixAttempts(log));
+  if (capReached(attempts, maxFixes)) {
+    console.log(`Fixer cap reached (${attempts} >= ${maxFixes}). No further patches.`);
+    setOutput("fixer_status", "capped");
+    return;
+  }
+
+  const token = process.env.RECEIPT_GIT_TOKEN;
+  if (!token) {
+    console.log(
+      "RECEIPT_GIT_TOKEN is missing. Add a fine-grained PAT for ohjay-official with Contents: write so Vercel Hobby will deploy the fixer commit. Do not upgrade Vercel to Pro.",
+    );
+    setOutput("fixer_status", "missing-token");
+    process.exitCode = 0;
+    return;
+  }
+
+  const inbox = readKaneInbox(workspace, testFile);
+  if (!inbox.resultMd) {
+    console.log("Skipping fixer: Result.md was not found. The fixer must read Kane's result.");
+    setOutput("fixer_status", "no-result");
+    return;
+  }
+
+  const readme = fs.existsSync(path.join(workspace, "README.md"))
+    ? fs.readFileSync(path.join(workspace, "README.md"), "utf8")
+    : "";
+  const claim = extractHowToTest(readme);
+
+  let proposal;
+  try {
+    proposal = await proposeFix({
+      claim,
+      resultMd: inbox.resultMd,
+      oneLiner: inbox.oneLiner,
+      workspace,
+      allowlist,
+      apiKey: process.env.GEMINI_API_KEY,
+    });
+  } catch (err) {
+    console.log(redact(err.message || String(err)));
+    setOutput("fixer_status", "gemini-failed");
+    return;
+  }
+
+  try {
+    assertAllowlisted(Object.keys(proposal.files), allowlist, DEFAULT_DENYLIST);
+  } catch (err) {
+    console.log(redact(err.message));
+    setOutput("fixer_status", "path-guard");
+    return;
+  }
+
+  applyFiles(workspace, proposal.files, allowlist, DEFAULT_DENYLIST);
+
+  const next = attempts + 1;
+  git(["add", "--", ...Object.keys(proposal.files)]);
+  const staged = git(["diff", "--cached", "--name-only"]).trim().split(/\n/).filter(Boolean);
+  try {
+    assertAllowlisted(staged, allowlist, DEFAULT_DENYLIST);
+  } catch (err) {
+    git(["reset", "--hard", "HEAD"]);
+    console.log(redact(err.message));
+    setOutput("fixer_status", "path-guard");
+    return;
+  }
+  if (staged.length === 0) {
+    console.log("Fixer produced no staged changes.");
+    setOutput("fixer_status", "no-changes");
+    return;
+  }
+
+  git(["config", "user.name", "ohjay-official"]);
+  git(["config", "user.email", "ohjay-official@users.noreply.github.com"]);
+  git(["commit", "-m", `receipt-fix: ${next}`]);
+
+  const eventPath = process.env.GITHUB_EVENT_PATH;
+  let sha = process.env.GITHUB_SHA;
+  if (eventPath && fs.existsSync(eventPath)) {
+    const event = JSON.parse(fs.readFileSync(eventPath, "utf8"));
+    sha = event.deployment?.sha || sha;
+  }
+  const pr = await findPullRequest({ sha, token: process.env.GITHUB_TOKEN }).catch(() => null);
+  const branch = pr?.head?.ref;
+  if (!branch) {
+    console.log("Could not resolve the PR branch; fixer commit is local only.");
+    setOutput("fixer_status", "no-branch");
+    return;
+  }
+
+  const extraHeader = `AUTHORIZATION: bearer ${token}`;
+  try {
+    execFileSync(
+      "git",
+      ["-c", `http.https://github.com/.extraheader=${extraHeader}`, "push", "origin", `HEAD:refs/heads/${branch}`],
+      {
+        cwd: workspace,
+        encoding: "utf8",
+        env: { ...process.env, GIT_TERMINAL_PROMPT: "0" },
+        stdio: ["ignore", "pipe", "pipe"],
+      },
+    );
+  } catch (err) {
+    console.log(redact(err.stderr || err.message || "git push failed"));
+    setOutput("fixer_status", "push-failed");
+    return;
+  }
+  console.log(`Pushed receipt-fix: ${next} to ${branch} (allowlisted paths only).`);
+  setOutput("fixer_status", "pushed");
+  setOutput("fixer_commit", `receipt-fix: ${next}`);
+}
+
+await main();

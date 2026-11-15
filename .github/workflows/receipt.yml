@@ -1,0 +1,41 @@
+# Demo workflow: Kane on the Vercel preview of this repository.
+# The official Kane preview example uses deployment_status and cannot
+# comment on the PR (wrong event). Receipt posts its own comment.
+name: Receipt
+
+on:
+  deployment_status:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: receipt-${{ github.event.deployment.environment || github.event.deployment.sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  receipt:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RECEIPT_GIT_TOKEN: ${{ secrets.RECEIPT_GIT_TOKEN }}
+    steps:
+      - name: Checkout the deployment SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha }}
+          fetch-depth: 0
+          token: ${{ secrets.RECEIPT_GIT_TOKEN || github.token }}
+
+      - name: Receipt
+        uses: ./
+        with:
+          test-file: tests/checkout_test.md
+          production-url: ${{ vars.RECEIPT_PRODUCTION_URL }}
+          allowlist: shop/**
+          max-fixes: "3"
+          username: ${{ secrets.LT_USERNAME }}
+          access-key: ${{ secrets.LT_ACCESS_KEY }}
+          gemini-api-key: ${{ secrets.GEMINI_API_KEY }}

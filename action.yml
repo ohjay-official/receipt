@@ -1,0 +1,247 @@
+name: Receipt
+description: Run Kane CLI on a Vercel preview against a README How-to-test contract, pin evidence on the PR, and let a fixer patch allowlisted app source only.
+author: Oh-Jay
+branding:
+  icon: check-square
+  color: gray-dark
+
+inputs:
+  test-file:
+    description: Path to the committed Kane _test.md file
+    required: false
+    default: tests/checkout_test.md
+  production-url:
+    description: Fallback start URL if the preview never returns HTTP 200
+    required: false
+    default: ""
+  allowlist:
+    description: Glob(s) the fixer may write, comma-separated
+    required: false
+    default: shop/**
+  max-fixes:
+    description: Maximum receipt-fix N commits before the loop stops
+    required: false
+    default: "3"
+  username:
+    description: TestMu username (pass from secrets.LT_USERNAME)
+    required: true
+  access-key:
+    description: TestMu access key (pass from secrets.LT_ACCESS_KEY)
+    required: true
+  gemini-api-key:
+    description: Gemini API key (pass from secrets.GEMINI_API_KEY). Required only when a fixer run is attempted.
+    required: false
+    default: ""
+
+outputs:
+  status:
+    description: passed or failed
+    value: ${{ steps.classify.outputs.status }}
+  exit-class:
+    description: pass, fail, setup, timeout, or unknown
+    value: ${{ steps.classify.outputs.exit_class }}
+  preview-url:
+    description: Start URL Kane actually used
+    value: ${{ steps.preview.outputs.preview_url }}
+  kane-exit:
+    description: Numeric Kane process exit code, if captured
+    value: ${{ steps.kane.outputs.kane_exit }}
+  evidence-path:
+    description: Workspace path hint for the evidence pack
+    value: ${{ steps.kane.outputs.evidence_hint }}
+  attempts:
+    description: Highest receipt-fix N already on the branch
+    value: ${{ steps.attempts.outputs.attempts }}
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve preview URL
+      id: preview
+      shell: bash
+      env:
+        RECEIPT_ACTION_PATH: ${{ github.action_path }}
+        RECEIPT_PRODUCTION_URL: ${{ inputs.production-url }}
+      run: |
+        set -euo pipefail
+        node "$RECEIPT_ACTION_PATH/src/resolve-preview.mjs"
+
+    - name: Wait for HTTP 200
+      id: wait
+      shell: bash
+      env:
+        RECEIPT_ACTION_PATH: ${{ github.action_path }}
+        PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
+        PRODUCTION_URL: ${{ inputs.production-url }}
+      run: |
+        set -euo pipefail
+        node "$RECEIPT_ACTION_PATH/src/wait-http.mjs"
+
+    - name: Count fixer attempts
+      id: attempts
+      shell: bash
+      env:
+        RECEIPT_ACTION_PATH: ${{ github.action_path }}
+      run: |
+        set -euo pipefail
+        node "$RECEIPT_ACTION_PATH/src/count-attempts.mjs"
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "24"
+
+    - name: Set up Chrome
+      id: chrome
+      uses: browser-actions/setup-chrome@v2
+      with:
+        chrome-version: stable
+
+    - name: Point Kane CLI at Chrome
+      shell: bash
+      env:
+        CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+      run: |
+        set -euo pipefail
+        if [ -n "${CHROME_PATH:-}" ]; then
+          echo "KANE_CLI_CHROME_PATH=$CHROME_PATH" >> "$GITHUB_ENV"
+        fi
+        : "${KANE_CLI_CDP_TIMEOUT_MS:=60000}"
+        : "${KANE_CLI_CDP_RETRIES:=2}"
+        echo "KANE_CLI_CDP_TIMEOUT_MS=$KANE_CLI_CDP_TIMEOUT_MS" >> "$GITHUB_ENV"
+        echo "KANE_CLI_CDP_RETRIES=$KANE_CLI_CDP_RETRIES" >> "$GITHUB_ENV"
+
+    - name: Install Kane CLI
+      shell: bash
+      run: |
+        set -euo pipefail
+        npm install -g @testmuai/kane-cli
+        kane-cli --version
+
+    - name: Run Kane
+      id: kane
+      shell: bash
+      env:
+        TEST_FILE: ${{ inputs.test-file }}
+        PREVIEW_URL: ${{ steps.wait.outputs.start_url }}
+        LT_USERNAME: ${{ inputs.username }}
+        LT_ACCESS_KEY: ${{ inputs.access-key }}
+      run: |
+        set -euo pipefail
+        mkdir -p kane-out
+        if [ -z "${PREVIEW_URL:-}" ]; then
+          echo "::error::No start URL for Kane (preview and production fallback were empty or down)."
+          echo "kane_exit=2" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        if [ -z "${LT_USERNAME:-}" ] || [ -z "${LT_ACCESS_KEY:-}" ]; then
+          echo "::error::LT_USERNAME / LT_ACCESS_KEY are required. Pass them from repository secrets."
+          echo "kane_exit=2" >> "$GITHUB_OUTPUT"
+          exit 0
+        fi
+        set +e
+        kane-cli testmd run "$TEST_FILE" \
+          --agent \
+          --headless \
+          --timeout 300 \
+          --max-steps 40 \
+          --url "$PREVIEW_URL" \
+          --name receipt-checkout \
+          --username "$LT_USERNAME" \
+          --access-key "$LT_ACCESS_KEY" \
+          > kane-out/stream.ndjson \
+          2> kane-out/stderr.log
+        rc=$?
+        set -e
+        # Do not cat credentials. stderr is archived; print a short non-secret tail.
+        echo "kane_exit=$rc" >> "$GITHUB_OUTPUT"
+        echo "Kane exited $rc"
+        if [ -f kane-out/stderr.log ]; then
+          echo "::group::kane-cli stderr (redacted tail)"
+          sed -E 's/(--access-key|--username)[[:space:]]+[^[:space:]]+/\1 [redacted]/g' kane-out/stderr.log | tail -n 80
+          echo "::endgroup::"
+        fi
+        if [ -d .testmuai/evidence ]; then
+          echo "evidence_hint=.testmuai/evidence" >> "$GITHUB_OUTPUT"
+        fi
+        exit 0
+
+    - name: Classify Kane exit
+      id: classify
+      if: always()
+      shell: bash
+      env:
+        RECEIPT_ACTION_PATH: ${{ github.action_path }}
+        TEST_FILE: ${{ inputs.test-file }}
+        KANE_EXIT: ${{ steps.kane.outputs.kane_exit }}
+      run: |
+        set -euo pipefail
+        node "$RECEIPT_ACTION_PATH/src/classify-exit.mjs"
+
+    - name: Upload evidence and Result.md
+      id: evidence
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: receipt-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+        include-hidden-files: true
+        if-no-files-found: ignore
+        retention-days: 30
+        path: |
+          .testmuai/evidence/
+          tests/output-*/Result.md
+          kane-out/
+
+    - name: Comment on the pull request
+      id: comment
+      if: always()
+      shell: bash
+      env:
+        RECEIPT_ACTION_PATH: ${{ github.action_path }}
+        GITHUB_TOKEN: ${{ github.token }}
+        TEST_FILE: ${{ inputs.test-file }}
+        PREVIEW_URL: ${{ steps.wait.outputs.start_url }}
+        EXIT_CLASS: ${{ steps.classify.outputs.exit_class }}
+        STATUS: ${{ steps.classify.outputs.status }}
+        ATTEMPTS: ${{ steps.attempts.outputs.attempts }}
+        MAX_FIXES: ${{ inputs.max-fixes }}
+        KANE_EXIT: ${{ steps.kane.outputs.kane_exit }}
+        USED_FALLBACK: ${{ steps.wait.outputs.used_fallback }}
+        EVIDENCE_ARTIFACT_ID: ${{ steps.evidence.outputs.artifact-id }}
+        EVIDENCE_ARTIFACT_NAME: receipt-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+      run: |
+        set -euo pipefail
+        node "$RECEIPT_ACTION_PATH/src/comment.mjs"
+
+    - name: Fixer (allowlisted shop source only)
+      id: fixer
+      if: always() && steps.classify.outputs.exit_class == 'fail'
+      shell: bash
+      env:
+        RECEIPT_ACTION_PATH: ${{ github.action_path }}
+        GEMINI_API_KEY: ${{ inputs.gemini-api-key }}
+        RECEIPT_GIT_TOKEN: ${{ env.RECEIPT_GIT_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
+        TEST_FILE: ${{ inputs.test-file }}
+        ALLOWLIST: ${{ inputs.allowlist }}
+        MAX_FIXES: ${{ inputs.max-fixes }}
+        ATTEMPTS: ${{ steps.attempts.outputs.attempts }}
+        EXIT_CLASS: ${{ steps.classify.outputs.exit_class }}
+      run: |
+        set -euo pipefail
+        node "$RECEIPT_ACTION_PATH/src/fixer.mjs"
+
+    - name: Fail the check if Kane was not green
+      if: always()
+      shell: bash
+      env:
+        EXIT_CLASS: ${{ steps.classify.outputs.exit_class }}
+        STATUS: ${{ steps.classify.outputs.status }}
+      run: |
+        set -euo pipefail
+        if [ "${EXIT_CLASS:-}" = "pass" ] || [ "${STATUS:-}" = "passed" ]; then
+          echo "Kane passed."
+          exit 0
+        fi
+        echo "::error::Kane did not pass (exit class ${EXIT_CLASS:-unknown}). The Receipt check is red."
+        exit 1

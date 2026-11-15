@@ -1,0 +1,12 @@
+node_modules/
+shop/node_modules/
+shop/.next/
+shop/out/
+.env
+.env.*
+!.env.example
+.testmuai/
+kane-out/
+*.log
+.DS_Store
+.vercel
