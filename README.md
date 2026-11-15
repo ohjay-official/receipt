@@ -21,8 +21,12 @@ Proof (do not trust a green badge without the clip):
 - Preview after the fix (`/checkout` is $19): https://receipt-git-demo-t6-first-kane-run-oh-jay-s-projects.vercel.app
 - Red Kane run (the $29 catch): https://github.com/ohjay-official/receipt/actions/runs/43683895636
 - Evidence of that catch: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149438398
-- Green re-verify: https://github.com/ohjay-official/receipt/actions/runs/43684482513
+- Green re-verify (manual `workflow_dispatch`): https://github.com/ohjay-official/receipt/actions/runs/43684482513
 - Green evidence: https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149882316
+- Auto-trigger green run (`pull_request`, no manual dispatch): https://github.com/ohjay-official/receipt/actions/runs/43685063728
+- Evidence from that auto-run (includes `tests/output-checkout/` recordings): https://evidence.lambdatest.com/?pack=gh-artifact%3Aohjay-official%2Freceipt%2F14149699945
+
+CI: on this demo PR, Action unit tests, Shop build, and Shop price contract are all green. On `main`, Shop price contract stays red on purpose: checkout is still the seeded $29, and the unit test asserts checkout equals the $19 pricing source of truth.
 
 ---
 
