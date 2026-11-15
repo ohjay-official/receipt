@@ -15,7 +15,7 @@ export default function ShopCatalogPage() {
         <p className="label">{SHOP_NAME}</p>
         <h1>A small press shop</h1>
         <p className="lede">
-          Field &amp; Ledger outfits small presses. The Pro membership is listed at{" "}
+          Field &amp; Ledger supplies cloth, type, and membership to small presses. The Pro membership is listed at{" "}
           {formatUsd(PRO_PLAN_USD)} a month. That published number is the contract.
           Checkout is where the seeded bugs live.
         </p>
