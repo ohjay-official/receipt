@@ -1,3 +1,4 @@
+/** Proof PR: cheat-refusal demo. Do not merge. */
 import type { Metadata } from "next";
 import Link from "next/link";
 import { formatUsd, PLAN_NAME, PLAN_PERIOD, PRO_PLAN_USD } from "@/lib/prices";
