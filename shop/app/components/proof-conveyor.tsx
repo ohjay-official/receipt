@@ -9,7 +9,20 @@ const PHOTOS = [
   "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/2bebad68-8177-446a-9550-d64074166364.webp",
   "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/62b0d7c1-3eb7-44bd-9b19-57b975fb250f.webp",
   "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/156ff74d-ee37-4443-8f3a-11ae2095ed4c.webp",
+  "https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/7b6ad638-89ec-4dec-be74-d36fbff3ea53.webp",
 ];
+
+const NEXT = {
+  id: "next",
+  title: "Your next pull request",
+  lines: ["No run yet", "Install Receipt on the repo", "Open a pull request"],
+  attempts: "not run",
+  verdict: "install",
+  commit: "none yet",
+  note: "No result until Kane runs",
+};
+
+const CARDS = [...BELT, NEXT];
 
 function hash(a: number, b: number, c: number) {
   let h = Math.imul(a, 374761393) + Math.imul(b, 668265263) + Math.imul(c | 0, 2147483647);
@@ -42,7 +55,7 @@ export default function ProofConveyor() {
       const ch = first.offsetHeight;
       const gap = Math.max(24, belt.clientWidth * 0.0475);
       const span = cw + gap;
-      const period = span * BELT.length;
+      const period = span * CARDS.length;
       if (!state.lt) {
         state.off = belt.clientWidth / 2 - cw * 0.62;
         state.lt = now;
@@ -60,7 +73,7 @@ export default function ProofConveyor() {
       const top = belt.getBoundingClientRect().top;
       let cross = -1;
       const placed: { x: number; cut: number }[] = [];
-      for (let i = 0; i < BELT.length; i += 1) {
+      for (let i = 0; i < CARDS.length; i += 1) {
         const x = ((state.off + i * span) % period + period) % period - span;
         const cut = Math.max(0, Math.min(cw, Lx - x));
         placed.push({ x, cut });
@@ -78,8 +91,8 @@ export default function ProofConveyor() {
         if (cut > 0 && cut < cw) cross = i;
       }
       if (countRef.current && pctRef.current) {
-        const label = cross >= 0 ? BELT[cross].attempts : "Kane";
-        const side = cross >= 0 ? BELT[cross].verdict : "waiting";
+        const label = cross >= 0 ? CARDS[cross].attempts : "Kane";
+        const side = cross >= 0 ? CARDS[cross].verdict : "waiting";
         if (label !== state.shown) {
           state.shown = label;
           countRef.current.textContent = label;
@@ -164,7 +177,7 @@ export default function ProofConveyor() {
           <h2 id="proof-conveyor-title">Built for reviewers.<br />Read from the runs.</h2>
         </div>
         <div>
-          <p>Five open pull requests pass the line. Right of it is the preview. Left of it is the receipt Kane left behind, in the words of the run.</p>
+          <p>Five open pull requests pass the line, then a sixth card for a pull request that has not run yet. Right of the line is the preview. Left of it is the receipt text. Nothing on the sixth card is a result.</p>
           <a className="rx-pill rx-pill-ink" href="/proof" style={{ marginTop: 20 }}>See the proof</a>
         </div>
       </div>
@@ -175,7 +188,7 @@ export default function ProofConveyor() {
       <div className="rx-scan" aria-hidden="true" />
       <div className="rx-belt" ref={beltRef}>
         <canvas className="rx-fx" ref={canvasRef} />
-        {BELT.map((card, index) => (
+        {CARDS.map((card, index) => (
           <article key={card.id} className="rx-card-abs" ref={(node) => { cards.current[index] = node; }} aria-hidden="true">
             <div className="rx-card-face" style={{ backgroundImage: `linear-gradient(180deg, rgba(32,42,54,.15), rgba(32,42,54,.62)), url(${PHOTOS[index]})` }}>
               <h3>{card.title}</h3>
@@ -183,7 +196,7 @@ export default function ProofConveyor() {
             </div>
           </article>
         ))}
-        {BELT.map((card, index) => (
+        {CARDS.map((card, index) => (
           <pre key={`${card.id}-code`} className="rx-code-abs" ref={(node) => { codes.current[index] = node; }}>
 {`<h1>${card.title}</h1>
 <p>${card.lines.join("\n")}</p>

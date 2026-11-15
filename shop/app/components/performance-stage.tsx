@@ -43,6 +43,62 @@ const GLYPHS: Record<string, string[]> = {
   d: ["00001", "00001", "01111", "10001", "10001", "10001", "01111"],
 };
 
+function Gauge() {
+  const ticks = Array.from({ length: 23 }, (_, i) => {
+    const angle = ((190 + i * 5) * Math.PI) / 180;
+    const outer = 142;
+    const inner = i % 5 === 0 ? 129 : 133;
+    return { i, x1: 163 + Math.cos(angle) * inner, y1: 163 + Math.sin(angle) * inner, x2: 163 + Math.cos(angle) * outer, y2: 163 + Math.sin(angle) * outer, w: i % 5 === 0 ? 1.5 : 1 };
+  });
+  return (
+    <svg className="rx-gauge" viewBox="0 0 326 326" aria-hidden="true">
+      <path d="M11.34 136.26A154 154 0 0 1 307.71 110.33" fill="none" stroke="rgba(32,42,54,.55)" strokeWidth="3.2" strokeLinecap="round" />
+      <path d="M6.91 135.48A158.5 158.5 0 0 1 311.94 108.79" fill="none" stroke="rgba(255,255,255,.9)" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M19.22 137.65A146 146 0 0 1 236 36.56" fill="none" stroke="rgba(255,255,255,.35)" strokeWidth="1.15" />
+      {ticks.map((tick) => <line key={tick.i} x1={tick.x1} y1={tick.y1} x2={tick.x2} y2={tick.y2} stroke="rgba(255,255,255,.5)" strokeWidth={tick.w} />)}
+    </svg>
+  );
+}
+
+function TileWall() {
+  return (
+    <>
+      <svg className="rx-tiles" viewBox="0 0 429 554" preserveAspectRatio="none" aria-hidden="true">
+        <rect x="-24" y="22" width="106" height="149" rx="15" fill="rgba(255,255,255,.16)" />
+        <rect x="88" y="22" width="247" height="150" rx="15" fill="rgba(249,250,251,.28)" />
+        <rect x="346" y="22" width="111" height="147" rx="15" fill="rgba(255,255,255,.12)" />
+        <rect x="-24" y="177" width="108" height="174" rx="15" fill="rgba(32,42,54,.28)" />
+        <rect x="88" y="177" width="247" height="174" rx="15" fill="rgba(255,255,255,.18)" />
+        <rect x="344" y="175" width="113" height="176" rx="15" fill="rgba(209,213,219,.22)" />
+        <rect x="-24" y="384" width="480" height="170" fill="rgba(32,42,54,.4)" />
+        <rect x="81" y="30" width="8" height="150" fill="rgba(32,42,54,.45)" />
+        <rect x="338" y="30" width="8" height="322" fill="rgba(32,42,54,.45)" />
+        <rect x="0" y="167" width="429" height="12" fill="rgba(32,42,54,.35)" />
+      </svg>
+      <div className="rx-window" />
+    </>
+  );
+}
+
+function ConnectionMap() {
+  const strokes = [
+    "M0 5H128c27 0 36 7 39 26 2 16 9 22 24 22h106c16 0 23-8 25-25 2-16 10-23 31-23h76",
+    "M0 117h46c15 0 22 8 26 25 5 23 12 31 31 31h174c18 0 25-8 30-31 4-17 11-25 26-25h96",
+    "M0 173h87c15 0 22 7 27 25 4 15 11 22 28 22h140c17 0 25-7 29-22 5-18 12-25 28-25h90",
+    "M0 61h95c14 0 22-6 27-20 4-13 12-20 27-20h115c15 0 23 6 27 20 5 14 13 20 28 20h110",
+  ];
+  return (
+    <svg className="rx-map" viewBox="0 0 429 238" preserveAspectRatio="none" aria-hidden="true">
+      {strokes.map((d) => <path key={d} d={d} fill="none" stroke="rgba(255,255,255,.55)" strokeWidth="1.15" />)}
+      <circle cx="45" cy="117" r="6.5" fill="#fff" />
+      <circle cx="133" cy="61" r="6.5" fill="#f9fafb" />
+      <circle cx="189" cy="61" r="6.5" fill="#e5e7eb" />
+      <circle cx="319" cy="61" r="6.5" fill="#fff" />
+      <circle cx="319" cy="117" r="6.5" fill="#d1d5db" />
+    </svg>
+  );
+}
+
 function DotWord({ word }: { word: string }) {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
@@ -94,9 +150,12 @@ export default function PerformanceStage() {
         </p>
       </div>
       <div className="rx-cards">
-        {CARDS.map((card) => (
+        {CARDS.map((card, index) => (
           <Link key={card.metric} className="rx-card" href={card.href}>
             <video className="rx-card-media" autoPlay muted loop playsInline preload="auto" poster={card.poster} src={card.video} />
+            {index === 0 ? <Gauge /> : null}
+            {index === 1 ? <TileWall /> : null}
+            {index === 2 ? <ConnectionMap /> : null}
             <h3 className="rx-card-title">{card.title.split("\n").map((line) => <span key={line} style={{ display: "block" }}>{line}</span>)}</h3>
             <p className="rx-card-metric">{card.metric}</p>
             <p className="rx-card-caption">{card.caption.split("\n").map((line) => <span key={line} style={{ display: "block" }}>{line}</span>)}</p>
