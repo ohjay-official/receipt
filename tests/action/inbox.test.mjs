@@ -29,7 +29,26 @@ test("parseResultMd reads frontmatter and the failed step", () => {
   assert.equal(parsed.failedSteps.length, 1);
   assert.equal(parsed.failedSteps[0].heading, "Checkout must show $19 for Pro");
   assert.equal(parsed.passedSteps.length, 2);
-  assert.match(parsed.failedSteps[0].detail || failed, /\$29/);
+  assert.match(parsed.failedSteps[0].detail, /\$29/);
+});
+
+test("parseResultMd keeps the Reason line after an md5 line", () => {
+  const live = `---
+test: ../checkout_test.md
+status: failed
+---
+
+## Open the pricing page and confirm Pro is $19 ✓ passed (30.9s)
+md5: aaa
+
+## Checkout must show $19 for Pro ✗ failed (25s)
+md5: bbb
+Reason: Final verification failed — bug verdict: Pro checkout renders $29 instead of $19 [application_issue/ui_data_defect, confidence 0.98]
+`;
+  const parsed = parseResultMd(live);
+  assert.equal(parsed.failedSteps.length, 1);
+  assert.match(parsed.failedSteps[0].detail, /\$29/);
+  assert.match(parsed.failedSteps[0].detail, /application_issue/);
 });
 
 test("classifyKaneExit maps numeric process exits first", () => {
