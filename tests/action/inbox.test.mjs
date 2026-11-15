@@ -33,10 +33,29 @@ test("parseResultMd reads frontmatter and the failed step", () => {
 });
 
 test("classifyKaneExit maps numeric process exits first", () => {
-  assert.equal(classifyKaneExit({ processExit: 0 }), "pass");
+  assert.equal(classifyKaneExit({ processExit: 0, resultMd: passed }), "pass");
   assert.equal(classifyKaneExit({ processExit: 1, resultMd: failed }), "fail");
   assert.equal(classifyKaneExit({ processExit: 2 }), "setup");
   assert.equal(classifyKaneExit({ processExit: "3" }), "timeout");
+});
+
+test("classifyKaneExit does not treat a no-step exit 0 as a pass", () => {
+  assert.equal(classifyKaneExit({ processExit: 0 }), "setup");
+  assert.equal(
+    classifyKaneExit({
+      processExit: 0,
+      stderrLog: "info: no steps in tests/checkout_test.md; nothing to run.",
+    }),
+    "setup",
+  );
+  assert.equal(
+    classifyKaneExit({
+      processExit: 0,
+      resultMd: passed,
+      stderrLog: "info: no steps in tests/checkout_test.md; nothing to run.",
+    }),
+    "setup",
+  );
 });
 
 test("classifyKaneExit uses Result.md when the official action hides the numeric code", () => {
