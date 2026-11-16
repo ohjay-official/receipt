@@ -3,8 +3,12 @@ import Link from "next/link";
 import DocsNav from "../components/docs-nav";
 import { Actions, Crumb } from "../components/rebuild/bits";
 import Subnav from "../components/rebuild/subnav";
+import { pageMeta } from "@/lib/meta";
 
-export const metadata: Metadata = { title: "Docs" };
+export const metadata: Metadata = pageMeta(
+  "Docs",
+  "Install the action, read the How-to-test contract, and see the guardrails. Receipt runs on GitHub Actions, Vercel previews, and Kane CLI.",
+);
 
 const CARDS = [
   ["Install", "/docs/install", "Secrets, the production URL variable, and the workflow that waits for Vercel.", "Repo secrets", "One workflow file"],

@@ -4,8 +4,12 @@ import { Actions, Crumb, ProofLedger, Rows, I } from "../components/rebuild/bits
 import Rail from "../components/rebuild/rail";
 import Subnav from "../components/rebuild/subnav";
 import { KANE_STEPS_RED, PR3, PR4 } from "@/lib/site";
+import { pageMeta } from "@/lib/meta";
 
-export const metadata: Metadata = { title: "How it works" };
+export const metadata: Metadata = pageMeta(
+  "How it works",
+  "Receipt starts Kane, pins what Kane saw, and when the contract fails offers one patch fenced to shop source. The cap is three receipt-fix commits.",
+);
 
 const MOVES = [
   {

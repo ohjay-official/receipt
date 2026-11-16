@@ -54,6 +54,7 @@ export default function VantixFooter() {
       <div className="rb-foot-bottom">
         <p className="rb-foot-meta">
           <a href={REPO_URL}>GitHub</a>
+          <Link href="/privacy">Privacy</Link>
           <a href={HACKATHON_URL}>Kane CLI hackathon</a>
         </p>
         <p className="rb-status"><i />Seeded bugs live on main</p>

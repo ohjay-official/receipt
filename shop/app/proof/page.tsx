@@ -4,8 +4,12 @@ import ProofWindows from "../components/rebuild/proof-windows";
 import Rail from "../components/rebuild/rail";
 import Subnav from "../components/rebuild/subnav";
 import { PRODUCTION_URL, PROOF_ROWS } from "@/lib/site";
+import { pageMeta } from "@/lib/meta";
 
-export const metadata: Metadata = { title: "Proof" };
+export const metadata: Metadata = pageMeta(
+  "Proof",
+  "Five pull requests ran the loop. Each receipt links its red run, its fix, and its green run. None should be merged. Main still has the seeded bugs.",
+);
 
 export default function ProofPage() {
   return (

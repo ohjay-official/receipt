@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Crumb } from "../../components/rebuild/bits";
 import DocsFrame from "../../components/rebuild/docs-frame";
+import { pageMeta } from "@/lib/meta";
 
-export const metadata: Metadata = { title: "The contract" };
+export const metadata: Metadata = pageMeta(
+  "The contract",
+  "The README How-to-test block has five required steps: Pro at $19, checkout at $19, LAUNCH10 to $17.10, and Pay after Phone layout (390px).",
+);
 
 export default function ContractPage() {
   return (

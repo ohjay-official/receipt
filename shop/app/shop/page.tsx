@@ -5,6 +5,7 @@ import DemoBanner from "../components/demo-banner";
 
 export const metadata: Metadata = {
   title: { absolute: `${SHOP_NAME} — Demo shop` },
+  description: "Field & Ledger is the demo shop Kane reads. Pro is listed at $19 a month. There is no account and no real payment.",
 };
 
 export default function ShopCatalogPage() {

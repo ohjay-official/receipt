@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Crumb } from "../../components/rebuild/bits";
 import DocsFrame from "../../components/rebuild/docs-frame";
+import { pageMeta } from "@/lib/meta";
 
-export const metadata: Metadata = { title: "Limitations" };
+export const metadata: Metadata = pageMeta(
+  "Limitations",
+  "Kane 0.10.4 replay ignores --url. Kane cannot open a 390px window. This project uses pull_request because GitHub Deployments events do not arrive.",
+);
 
 export default function LimitationsPage() {
   return (

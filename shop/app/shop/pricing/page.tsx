@@ -5,6 +5,7 @@ import DemoBanner from "../../components/demo-banner";
 
 export const metadata: Metadata = {
   title: { absolute: `Plans — ${SHOP_NAME}` },
+  description: "Pro is published at $19 per month on the demo shop. That published price is the number the How-to-test contract checks.",
 };
 
 export default function PricingPage() {

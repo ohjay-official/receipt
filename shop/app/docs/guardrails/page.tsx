@@ -3,8 +3,12 @@ import Link from "next/link";
 import { PR4 } from "@/lib/site";
 import { Crumb } from "../../components/rebuild/bits";
 import DocsFrame from "../../components/rebuild/docs-frame";
+import { pageMeta } from "@/lib/meta";
 
-export const metadata: Metadata = { title: "Guardrails" };
+export const metadata: Metadata = pageMeta(
+  "Guardrails",
+  "The fixer may edit shop source only. Tests, the README contract, workflows, and the action are refused. Pull request #4 was refused for tests/checkout_test.md.",
+);
 
 export default function GuardrailsPage() {
   return (

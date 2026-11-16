@@ -3,8 +3,12 @@ import Link from "next/link";
 import { REPO_URL } from "@/lib/site";
 import { Crumb } from "../../components/rebuild/bits";
 import DocsFrame from "../../components/rebuild/docs-frame";
+import { pageMeta } from "@/lib/meta";
 
-export const metadata: Metadata = { title: "Install" };
+export const metadata: Metadata = pageMeta(
+  "Install",
+  "Add the repository secrets, set RECEIPT_PRODUCTION_URL, and copy the workflow that waits for the Vercel commit status.",
+);
 
 export default function InstallPage() {
   return (

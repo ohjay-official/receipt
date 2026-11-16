@@ -17,7 +17,7 @@ export default function HeroMedia() {
 
   return (
     <div className="m-hero-media" aria-hidden="true">
-      <svg className="m-hero-fallback" viewBox="0 0 320 180" fill="none">
+      <svg className="m-hero-fallback" viewBox="0 0 320 180" fill="none" aria-hidden="true">
         <rect x="168" y="36" width="112" height="78" rx="6" stroke="currentColor" strokeWidth="1.5" />
         <path d="M188 36v-10h72v10" stroke="currentColor" strokeWidth="1.5" />
         <path d="M196 78h56" stroke="currentColor" strokeWidth="1.5" />

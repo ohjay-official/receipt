@@ -5,6 +5,7 @@ import CheckoutForm from "../../components/checkout-form";
 
 export const metadata: Metadata = {
   title: { absolute: `Checkout — ${SHOP_NAME}` },
+  description: "The seeded checkout total on main is $29. LAUNCH10 does not change it. Pay is covered in Phone layout (390px). No real payment is taken.",
 };
 
 export default function CheckoutPage() {

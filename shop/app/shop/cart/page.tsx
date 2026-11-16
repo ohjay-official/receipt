@@ -5,6 +5,7 @@ import DemoBanner from "../../components/demo-banner";
 
 export const metadata: Metadata = {
   title: { absolute: `Cart — ${SHOP_NAME}` },
+  description: "The demo cart. Choosing Pro continues to checkout. Nothing on this page is a real charge.",
 };
 
 export default function CartPage() {
