@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Actions, Crumb, MiniSlip } from "../components/rebuild/bits";
 import ProofWindows from "../components/rebuild/proof-windows";
+import Rail from "../components/rebuild/rail";
 import Subnav from "../components/rebuild/subnav";
 import { PRODUCTION_URL, PROOF_ROWS } from "@/lib/site";
 
@@ -9,6 +10,7 @@ export const metadata: Metadata = { title: "Proof" };
 export default function ProofPage() {
   return (
     <main className="rb">
+      <Rail />
       <header className="rb-ihero">
         <div className="rb-wrap rb-ihero-grid">
           <div>

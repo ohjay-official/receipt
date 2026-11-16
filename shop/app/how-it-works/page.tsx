@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Actions, Crumb, ProofLedger, Rows, I } from "../components/rebuild/bits";
+import Rail from "../components/rebuild/rail";
 import Subnav from "../components/rebuild/subnav";
 import { KANE_STEPS_RED, PR3, PR4 } from "@/lib/site";
 
@@ -47,6 +48,7 @@ const MOVES = [
 export default function HowItWorksPage() {
   return (
     <main className="rb">
+      <Rail />
       <header className="rb-ihero">
         <div className="rb-wrap rb-ihero-grid">
           <div>

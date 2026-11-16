@@ -54,6 +54,8 @@
 }
 
 .page.rx:not(.shop-site) { overflow-x: clip; }
+main.rb { position: relative; }
+main.rb > .rb-rail { top: 96px; bottom: 24px; }
 .rb-wrap, .rb-frame, .rb-slips, .rb-cards, .rb-panel, .rb-split, .rb-journey, .rb-sec { min-width: 0; }
 .rb-slips, .rb-cards, .rb-tabbar, .rb-subnav-row { max-width: 100%; }
 .rb-journey { position: relative; margin-top: -72px; z-index: 2; }
