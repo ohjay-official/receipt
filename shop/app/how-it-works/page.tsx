@@ -1,81 +1,133 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import PageHero from "../components/page-hero";
-import PerformanceStage from "../components/performance-stage";
-import ReceiptSlip from "../components/receipt-slip";
-import { BELT, KANE_STEPS_RED, PR4 } from "@/lib/site";
+import { Actions, Crumb, ProofLedger, Rows, I } from "../components/rebuild/bits";
+import Subnav from "../components/rebuild/subnav";
+import { KANE_STEPS_RED, PR3, PR4 } from "@/lib/site";
 
 export const metadata: Metadata = { title: "How it works" };
 
-const STEPS = [
-  ["Kane checks the preview", "On a pull request, Receipt waits for the Vercel preview, remaps any recorded start URL onto that preview, and runs the committed Kane test against the How-to-test contract in the README.", "vercel status: success"],
-  ["A bug verdict, with evidence", "If a required step fails, Kane exits 1. Receipt uploads Result.md, recordings, and the evidence pack, and starts a receipt card on the pull request.", "kane exit 1 · checkout $29"],
-  ["An allowlisted fixer", "Gemini reads Kane’s result and may edit shop/** application source only. Shop unit tests, the Kane test, the contract, workflows, and the action are out of bounds.", "diff limited to shop/**"],
-  ["Redeploy, then re-verify", "A receipt-fix: N commit is pushed with the git token. Vercel builds a new preview. The same Kane test runs again, cap 3.", "receipt-fix: 1"],
-  ["A receipt card", "The pull request comment lists what Kane saw, the root cause, the fix or a refusal, attempt counts, and a link to the evidence pack.", "comment on the pull request"],
+const MOVES = [
+  {
+    id: "preview",
+    pill: "Preview",
+    title: <>Wait for Vercel.<br />Then remap the origin.</>,
+    lead: "On a pull request, Receipt waits for the Vercel commit status and rewrites the recorded start URL onto that preview.",
+    log: "vercel commit status: success\nremap origin → preview\nkane:how-to-test\npull request #3",
+  },
+  {
+    id: "kane",
+    pill: "Kane",
+    title: <>Kane reads the contract.<br />A miss exits 1.</>,
+    lead: "The How-to-test block is five required steps. On PR #3, step 3 failed because checkout showed $29.",
+    log: "kane exit 1\nstep 3 of 5 failed\ncheckout showed $29\nrun 43698574333",
+  },
+  {
+    id: "fix",
+    pill: "Fix",
+    title: <>One fenced patch.<br />Shop source only.</>,
+    lead: "Gemini may edit shop/** application source. Commit 186ecdc changed shop/lib/prices.ts and shop/lib/checkout.ts only.",
+    log: "receipt-fix: 1\n186ecdc\nshop/lib/prices.ts\nshop/lib/checkout.ts",
+  },
+  {
+    id: "reverify",
+    pill: "Re-verify",
+    title: <>Same contract.<br />New preview.</>,
+    lead: "A receipt-fix commit is pushed with the git token. Vercel builds again. Kane runs the same five steps, cap 3.",
+    log: "kane exit 0\n5 steps passed\ngreen run 43699955024\nattempt 1 of 3",
+  },
+  {
+    id: "receipt",
+    pill: "Receipt",
+    title: <>The card stays<br />on the pull request.</>,
+    lead: "The comment lists what Kane saw, the fix or the refusal, the attempt count, and the evidence pack.",
+    log: "Pull request #3\nVERIFIED\nred 43698574333\nfix 186ecdc\ngreen 43699955024",
+  },
 ];
 
 export default function HowItWorksPage() {
   return (
-    <main>
-      <PageHero
-        kicker="The loop"
-        title="From a lying preview to a receipt"
-        lede="Receipt is a composite GitHub Action in this repository. It does not replace Kane. It starts Kane, pins what Kane saw, and, when the contract fails, offers one tightly fenced patch."
-        crumb={[{ href: "/how-it-works", label: "How it works" }]}
-        primary={{ href: "/docs/guardrails", label: "Read the guardrails" }}
-        secondary={{ href: "/proof", label: "See the proof" }}
-      />
-      <PerformanceStage />
-      <section className="rx-band">
-        <div className="rx-container">
-          <p className="rx-kicker">Steps</p>
-          <h2>Five moves, then a card</h2>
-          <ol className="rx-timeline-list">
-            {STEPS.map(([title, body, mock], index) => (
-              <li key={title}>
-                <span>{index + 1}</span>
-                <div>
-                  <h3>{title}</h3>
-                  <p>{body}</p>
-                  <div className="rx-frame rx-frame-ink"><pre className="rx-log">{mock}</pre></div>
-                </div>
-              </li>
-            ))}
-          </ol>
+    <main className="rb">
+      <header className="rb-ihero">
+        <div className="rb-wrap rb-ihero-grid">
+          <div>
+            <Crumb items={[{ href: "/how-it-works", label: "How it works" }]} />
+            <p className="rb-pill">The loop</p>
+            <h1 className="rb-h1">From a lying preview<br />to a receipt.</h1>
+            <p className="rb-lead">Receipt is a composite GitHub Action. It does not replace Kane. It starts Kane, pins what Kane saw, and, when the contract fails, offers one tightly fenced patch.</p>
+            <Actions
+              primary={{ href: "/docs/guardrails", label: "Read the guardrails" }}
+              secondary={{ href: "/proof", label: "See the proof" }}
+            />
+          </div>
+          <div className="rb-loop-diagram" aria-label="PR #3 loop">
+            <article><i /><div><strong>Preview</strong><span>vercel: ready</span></div></article>
+            <article><i /><div><strong>Kane</strong><span>exit 1 · checkout showed $29</span></div></article>
+            <article><i /><div><strong>Fix</strong><span>receipt-fix: 1 · {PR3.fixSha}</span></div></article>
+            <article><i /><div><strong>Re-verify</strong><span>green run 43699955024</span></div></article>
+            <article><i /><div><strong>Receipt</strong><span>VERIFIED · 1 / 3</span></div></article>
+          </div>
         </div>
-      </section>
-      <section className="rx-band">
-        <div className="rx-container">
-          <h2>Allowed, and refused</h2>
-          <div className="rx-allow">
+      </header>
+      <Subnav items={[
+        { href: "#preview", label: "Preview" },
+        { href: "#kane", label: "Kane" },
+        { href: "#fix", label: "Fix" },
+        { href: "#reverify", label: "Re-verify" },
+        { href: "#receipt", label: "Receipt" },
+        { href: "#guardrails", label: "Guardrails" },
+      ]} />
+      {MOVES.map((move, index) => (
+        <section className="rb-sec" id={move.id} key={move.id}>
+          <div className={index % 2 ? "rb-wrap rb-pair is-flip" : "rb-wrap rb-pair"}>
             <div>
+              <p className="rb-pill">{move.pill}</p>
+              <h2 className="rb-h2">{move.title}</h2>
+              <p className="rb-lead">{move.lead}</p>
+            </div>
+            <div className="rb-terminal"><pre>{move.log}</pre></div>
+          </div>
+        </section>
+      ))}
+      <section className="rb-sec" id="guardrails">
+        <div className="rb-wrap">
+          <p className="rb-pill">Guardrails</p>
+          <h2 className="rb-h2">Allowed, and refused.<br />The fence is the product.</h2>
+          <div className="rb-allow">
+            <article>
               <h3>Allowed</h3>
-              <p>shop/** application source</p>
-            </div>
-            <div>
+              <p>shop/** application source. PR #3 changed prices.ts and checkout.ts only.</p>
+            </article>
+            <article>
               <h3>Refused</h3>
-              <p>tests/, the README contract, .github, action.yml, and src/</p>
-            </div>
+              <p>tests/, the README contract, .github, action.yml, and src. PR #4 touched tests/checkout_test.md and was refused.</p>
+              <p className="rb-stamp is-bad" style={{ position: "static", marginTop: 16 }}>REFUSED</p>
+            </article>
           </div>
-          <ReceiptSlip title="Pull request #4" verdict="failed" attempts="0 / 3" steps={KANE_STEPS_RED} href={PR4.url} footnote={PR4.note} />
-          <p className="rx-lead"><Link href="/docs/guardrails">Read the guardrails in full</Link> · <Link href="/docs/limitations">Honest limitations</Link></p>
+          <div className="rb-paper rb-ledger" style={{ marginTop: 24 }}>
+            <p className="rb-slip-k">Pull request #4</p>
+            <h3>REFUSED · 0 / 3</h3>
+            <ol>
+              {KANE_STEPS_RED.map((step) => (
+                <li key={step.label}>{step.status} · {step.label}</li>
+              ))}
+            </ol>
+            <p>{PR4.note}. Run 43700368892.</p>
+            <p><a href={PR4.url}>Open the pull request</a></p>
+          </div>
+          <Rows
+            items={[
+              { icon: I.lock, title: "No test edits", body: "A patch that touches the Kane test or shop unit tests is refused before any push." },
+              { icon: I.stamp, title: "No price weakening", body: "Deleting a step or moving PRO_PLAN_USD off 19 is treated as weakening." },
+            ]}
+          />
+          <p className="rb-lead"><Link href="/docs/guardrails">Read the guardrails</Link> · <Link href="/docs/limitations">Limitations</Link></p>
         </div>
       </section>
-      <section className="rx-band">
-        <div className="rx-container">
-          <h2>Runs still open</h2>
-          <p className="rx-lead">None of these pull requests should be merged. Production on main keeps the seeded bugs.</p>
-          <div className="rx-ledger">
-            {BELT.map((card) => (
-              <a key={card.id} href={card.href}>
-                <span>{card.title}</span>
-                <span>{card.lines[0]}</span>
-                <span>{card.commit}</span>
-                <em className={card.verdict}>{card.verdict}</em>
-              </a>
-            ))}
-          </div>
+      <section className="rb-sec" id="runs">
+        <div className="rb-wrap">
+          <h2 className="rb-h2">Runs still open.<br />Nothing here is merged.</h2>
+          <p className="rb-lead">Production on main keeps the seeded bugs.</p>
+          <ProofLedger />
         </div>
       </section>
     </main>

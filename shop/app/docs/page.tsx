@@ -1,32 +1,68 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import DocsNav from "../components/docs-nav";
+import { Actions, Crumb } from "../components/rebuild/bits";
+import Subnav from "../components/rebuild/subnav";
 
 export const metadata: Metadata = { title: "Docs" };
 
+const CARDS = [
+  ["Install", "/docs/install", "Secrets, the production URL variable, and the workflow that waits for Vercel.", "Repo secrets", "One workflow file"],
+  ["The contract", "/docs/contract", "The How-to-test block Kane follows, including the three seeded bugs on main.", "Five required steps", "$19, $17.10, Pay"],
+  ["Configuration", "/docs/configuration", "Action inputs, the allowlist, and how Receipt finds the preview URL.", "shop/**", "max-fixes 3"],
+  ["Guardrails", "/docs/guardrails", "Shop application source only. No test or contract edits.", "PR #4 refused", "tests/checkout_test.md"],
+  ["Limitations", "/docs/limitations", "Kane replay ignores --url. CI Chrome cannot resize to a phone.", "Phone layout (390px)", "pull_request path"],
+];
+
 export default function DocsIndexPage() {
   return (
-    <article className="prose rx-doc">
-      <p className="label">Docs</p>
-      <h1>Set the contract, then let Kane read it</h1>
-      <p>
-        Receipt is a composite GitHub Action. You point it at a public repository
-        that deploys to Vercel, and at a How-to-test block in the README. Kane
-        runs that contract on the preview. If a required step fails, a fixer may
-        edit application source under <code>shop/**</code> only, then Kane runs
-        again.
-      </p>
-      <p>
-        Start with the one-file install if you want to wire the action. Read the
-        contract if you want to see exactly what Kane checks on this shop. The
-        limitations page is honest about Kane replay and the phone-layout control.
-      </p>
-      <div className="rx-doc-cards">
-        <Link href="/docs/install"><strong>Install</strong><span>Secrets, the production URL variable, and the workflow that waits for the Vercel commit status.</span></Link>
-        <Link href="/docs/contract"><strong>The contract</strong><span>The How-to-test block Kane follows, including the three seeded bugs on main.</span></Link>
-        <Link href="/docs/configuration"><strong>Configuration</strong><span>Action inputs, retries, and how Receipt finds the preview URL.</span></Link>
-        <Link href="/docs/guardrails"><strong>Guardrails</strong><span>Shop application source only. No test or contract edits. No weakening of advertised prices.</span></Link>
-        <Link href="/docs/limitations"><strong>Limitations</strong><span>Kane 0.10.4 replay ignores --url. CI Chrome cannot resize to a phone. The in-page Phone layout control covers that gap.</span></Link>
+    <>
+      <header className="rb-ihero">
+        <div className="rb-wrap rb-ihero-grid">
+          <div>
+            <Crumb items={[{ href: "/docs", label: "Docs" }]} />
+            <p className="rb-pill">Docs</p>
+            <h1 className="rb-h1">Set the contract,<br />then let Kane read it.</h1>
+            <p className="rb-lead">Receipt is a composite GitHub Action. You point it at a public repository that deploys to Vercel, and at a How-to-test block in the README.</p>
+            <Actions primary={{ href: "/docs/install", label: "Read the install" }} secondary={{ href: "/docs/contract", label: "The contract" }} />
+          </div>
+          <div className="rb-readme">
+            <div className="rb-chrome"><span>README.md</span></div>
+            <pre>
+              <mark>{"<!-- kane:how-to-test -->"}</mark>
+              {"\n"}1. Open /pricing. Pro is $19.
+              {"\n"}2. Choose Pro. Continue to /checkout.
+              {"\n"}3. Checkout must show $19.
+              {"\n"}4. LAUNCH10 must total $17.10.
+              {"\n"}5. Phone layout (390px), then Pay.
+              {"\n"}<mark>{"<!-- /kane:how-to-test -->"}</mark>
+            </pre>
+          </div>
+        </div>
+      </header>
+      <Subnav items={[
+        { href: "/docs/install", label: "Install" },
+        { href: "/docs/contract", label: "Contract" },
+        { href: "/docs/configuration", label: "Configuration" },
+        { href: "/docs/guardrails", label: "Guardrails" },
+        { href: "/docs/limitations", label: "Limitations" },
+      ]} />
+      <div className="rb-wrap rb-docs-grid">
+        <DocsNav />
+        <div>
+          <div className="rb-doc-cards">
+            {CARDS.map(([title, href, body, a, b]) => (
+              <Link key={href} href={href}>
+                <strong>{title}</strong>
+                <span>{body}</span>
+                <span>{a}</span>
+                <span>{b}</span>
+              </Link>
+            ))}
+          </div>
+          <p className="rb-banner">Receipt runs on GitHub Actions, Vercel previews, and Kane CLI.</p>
+        </div>
       </div>
-    </article>
+    </>
   );
 }
