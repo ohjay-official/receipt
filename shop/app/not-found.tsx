@@ -5,6 +5,7 @@ import { pageMeta } from "@/lib/meta";
 export const metadata: Metadata = pageMeta(
   "Page not on the slip",
   "This path is not on the site. The seeded shop is still at /pricing and /checkout.",
+  "/404",
 );
 
 export default function NotFound() {

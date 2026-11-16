@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 
-/** Title and description for a page, including the Open Graph and Twitter titles. */
-export function pageMeta(title: string, description: string, ogTitle = title): Metadata {
+/** Shared Open Graph, Twitter, and canonical tags. `path` is relative to metadataBase. */
+export function pageMeta(title: string, description: string, path: string, ogTitle = title): Metadata {
   return {
     title,
     description,
-    openGraph: { title: ogTitle, description },
-    twitter: { title: ogTitle, description },
+    alternates: { canonical: path },
+    openGraph: {
+      title: ogTitle,
+      description,
+      url: path,
+      images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "Receipt. Previewed. Verified." }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description,
+      images: ["/opengraph-image"],
+    },
   };
 }

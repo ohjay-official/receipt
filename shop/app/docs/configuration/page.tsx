@@ -6,6 +6,7 @@ import { pageMeta } from "@/lib/meta";
 export const metadata: Metadata = pageMeta(
   "Configuration",
   "Inputs used in this repo: the test file, allowlist shop/**, max-fixes 3, and the Vercel commit status on pull_request.",
+  "/docs/configuration",
 );
 
 export default function ConfigurationPage() {

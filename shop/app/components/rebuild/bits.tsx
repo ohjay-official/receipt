@@ -90,7 +90,7 @@ export function MiniSlip({
     <article className={active ? "rb-slip is-active" : "rb-slip"}>
       {active ? <span className="rb-scan" aria-hidden="true" /> : null}
       <p className="rb-slip-k">Receipt</p>
-      <h3>{row.title}</h3>
+      <p className="rb-slip-title">{row.title}</p>
       <p className={refused ? "rb-verdict is-bad" : "rb-verdict"}>{row.verdict}</p>
       <p className="rb-slip-meta">Kane {row.attempts}</p>
       <dl>

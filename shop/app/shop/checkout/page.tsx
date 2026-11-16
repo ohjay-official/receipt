@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import { PLAN_NAME, SHOP_NAME } from "@/lib/prices";
 import DemoBanner from "../../components/demo-banner";
 import CheckoutForm from "../../components/checkout-form";
+import { pageMeta } from "@/lib/meta";
+
+const CHECKOUT_DESCRIPTION = "The seeded checkout total on main is $29. LAUNCH10 does not change it. Pay is covered in Phone layout (390px). No real payment is taken.";
 
 export const metadata: Metadata = {
+  ...pageMeta(`Checkout — ${SHOP_NAME}`, CHECKOUT_DESCRIPTION, "/checkout"),
   title: { absolute: `Checkout — ${SHOP_NAME}` },
-  description: "The seeded checkout total on main is $29. LAUNCH10 does not change it. Pay is covered in Phone layout (390px). No real payment is taken.",
 };
 
 export default function CheckoutPage() {

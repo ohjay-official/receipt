@@ -2,12 +2,18 @@ import Link from "next/link";
 import SiteMenu from "./site-menu";
 import StableVideo from "./stable-video";
 
-const JET = "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_091828_e240eb17-6edc-4129-ad9d-98678e3fd238.mp4";
-
 export default function SkyHero() {
   return (
     <section className="rx-hero" aria-labelledby="rx-hero-title">
-      <StableVideo eager className="rx-hero-video" src={JET} poster="/hero/jet-poster.jpg" />
+      <StableVideo
+        className="rx-hero-video"
+        poster="/hero/jet-poster.jpg"
+        preload="metadata"
+        sources={[
+          { src: "/hero/jet-480.mp4", media: "(max-width: 600px)" },
+          { src: "/hero/jet-720.mp4" },
+        ]}
+      />
       <div className="rx-hero-shade" />
       <div className="rx-hero-fade" aria-hidden="true" />
       <div className="rx-hero-wrap">

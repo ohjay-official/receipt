@@ -5,7 +5,8 @@ import { pageMeta } from "@/lib/meta";
 
 export const metadata: Metadata = pageMeta(
   "Privacy",
-  "This site stores no accounts and sets no cookies of its own. The demo shop takes no payment. Vercel Web Analytics records anonymous page views.",
+  "This site stores no accounts and sets no cookies of its own. The demo shop takes no payment. Vercel Web Analytics records anonymous page views. Hosting and, if you install the action, TestMu and Gemini are named on this page.",
+  "/privacy",
 );
 
 export default function PrivacyPage() {
@@ -42,7 +43,7 @@ export default function PrivacyPage() {
             <p className="rb-pill">Collected</p>
             <h2 className="rb-h2">Anonymous page views.<br />Nothing you can sign in with.</h2>
             <p className="rb-lead">
-              Vercel Web Analytics counts pages people open. It does not use cookies and it does not identify a person. That is the only measurement this site adds.
+              Vercel Web Analytics counts pages people open. It does not use cookies and it does not identify a person. Vercel also keeps request logs for hosting. Those logs are named below.
             </p>
           </div>
           <div className="rb-terminal">
@@ -84,6 +85,29 @@ not collected
           <p className="rb-lead">
             This site has no model endpoint. The fixer is the GitHub Action in the repository you install it on. Secrets stay in that repository. The cap is three receipt-fix commits, and the allowlist is shop source.
           </p>
+          <ul className="rb-rows">
+            <li>
+              <span className="rb-ico" aria-hidden="true" />
+              <div>
+                <strong>Vercel hosting</strong>
+                <p>The site is hosted on Vercel. Vercel keeps request logs, which include IP addresses, as part of running the site.</p>
+              </div>
+            </li>
+            <li>
+              <span className="rb-ico" aria-hidden="true" />
+              <div>
+                <strong>If you install the action</strong>
+                <p>From your own repository secrets, the preview URL and Kane screenshots go to TestMu AI / LambdaTest. Shop source and Kane’s result go to Google Gemini when the fixer runs. This website does not make those calls.</p>
+              </div>
+            </li>
+            <li>
+              <span className="rb-ico" aria-hidden="true" />
+              <div>
+                <strong>Contact</strong>
+                <p><a href="https://github.com/ohjay-official/receipt/issues">GitHub issues on ohjay-official/receipt</a></p>
+              </div>
+            </li>
+          </ul>
         </div>
       </section>
     </main>

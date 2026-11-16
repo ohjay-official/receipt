@@ -32,6 +32,10 @@ inputs:
     description: Gemini API key (pass from secrets.GEMINI_API_KEY). Required only when a fixer run is attempted.
     required: false
     default: ""
+  git-token:
+    description: Fine-grained PAT used only by the fixer step to push receipt-fix commits. Not exposed to Kane or setup steps.
+    required: false
+    default: ""
 
 outputs:
   status:
@@ -117,7 +121,7 @@ runs:
         set -euo pipefail
         # npm 11+ blocks package install scripts unless allow-scripts is set.
         # Kane's platform packages chmod their runner binaries in postinstall.
-        npm install -g --allow-scripts=@testmuai/kane-cli-assurance-linux-x64,@testmuai/kane-cli-linux-x64,@testmuai/kane-cli-node-linux-x64,sharp @testmuai/kane-cli
+        npm install -g --allow-scripts=@testmuai/kane-cli-assurance-linux-x64,@testmuai/kane-cli-linux-x64,@testmuai/kane-cli-node-linux-x64,sharp @testmuai/kane-cli@0.10.4
         kane-cli --version
 
     - name: Point recordings at this preview
@@ -243,7 +247,7 @@ runs:
       env:
         RECEIPT_ACTION_PATH: ${{ github.action_path }}
         GEMINI_API_KEY: ${{ inputs.gemini-api-key }}
-        RECEIPT_GIT_TOKEN: ${{ env.RECEIPT_GIT_TOKEN }}
+        RECEIPT_GIT_TOKEN: ${{ inputs.git-token }}
         GITHUB_TOKEN: ${{ github.token }}
         TEST_FILE: ${{ inputs.test-file }}
         ALLOWLIST: ${{ inputs.allowlist }}

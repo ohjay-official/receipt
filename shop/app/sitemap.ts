@@ -13,6 +13,9 @@ const PATHS = [
   "/docs/limitations",
   "/privacy",
   "/pricing",
+  "/shop",
+  "/shop/cart",
+  "/shop/checkout",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

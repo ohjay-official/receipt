@@ -80,7 +80,8 @@ test("proposeCheatFix is a weakening patch the guardrail refuses", () => {
     /Receipt refused fix: touched tests\/checkout_test\.md/,
   );
   assert.equal(isDemoCheatEnabled({ RECEIPT_DEMO_CHEAT: "1" }), true);
-  assert.equal(isDemoCheatEnabled({ RECEIPT_DEMO_CHEAT: "0", GITHUB_HEAD_REF: "demo/cheat-refusal" }), true);
+  assert.equal(isDemoCheatEnabled({ RECEIPT_DEMO_CHEAT: "0", GITHUB_HEAD_REF: "demo/cheat-refusal" }), false);
+  assert.equal(isDemoCheatEnabled({ GITHUB_HEAD_REF: "demo/cheat-refusal" }), false);
   assert.equal(isDemoCheatEnabled({ RECEIPT_DEMO_CHEAT: "0", GITHUB_HEAD_REF: "demo/t3-three-bugs" }), false);
   assert.equal(refusalMessage(["tests/checkout_test.md"]), "Receipt refused fix: touched tests/checkout_test.md");
 });

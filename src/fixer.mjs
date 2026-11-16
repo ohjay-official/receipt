@@ -144,8 +144,8 @@ async function main() {
     return;
   }
 
-  git(["config", "user.name", "ohjay-official"]);
-  git(["config", "user.email", "ohjay-official@users.noreply.github.com"]);
+  git(["config", "user.name", process.env.RECEIPT_GIT_NAME || "receipt-bot"]);
+  git(["config", "user.email", process.env.RECEIPT_GIT_EMAIL || "41898282+github-actions[bot]@users.noreply.github.com"]);
   git(["commit", "-m", `receipt-fix: ${next}`]);
 
   const eventPath = process.env.GITHUB_EVENT_PATH;

@@ -19,9 +19,7 @@ permissions:
 jobs:
   receipt:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      RECEIPT_GIT_TOKEN: \${{ secrets.RECEIPT_GIT_TOKEN }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,11 +28,16 @@ jobs:
         with:
           test-file: tests/receipt_checkout_test.md
           production-url: \${{ vars.RECEIPT_PRODUCTION_URL }}
-          allowlist: shop/**
+          allowlist: "<your app path>/**"
           max-fixes: "3"
           username: \${{ secrets.LT_USERNAME }}
           access-key: \${{ secrets.LT_ACCESS_KEY }}
           gemini-api-key: \${{ secrets.GEMINI_API_KEY }}
+          git-token: \${{ secrets.RECEIPT_GIT_TOKEN }}
+        env:
+          RECEIPT_VERCEL_PROJECT: <your-vercel-project>
+          RECEIPT_VERCEL_SCOPE: <your-vercel-team-slug>
+          RECEIPT_WAIT_FOR_VERCEL_STATUS: \${{ github.event_name == 'pull_request' && 'true' || 'false' }}
 `;
 
 const LINES = [
@@ -98,7 +101,7 @@ export default function InstallPrint() {
             </button>
             <p className="rb-total"><span>Total</span><span>$0</span></p>
             <p className="rb-fine">
-              Public repo, Vercel Hobby, Kane’s free grant, Gemini free Flash. @main is not pinned to a release tag. This install has not been verified on a second repo.
+              Public repo, Vercel Hobby, Kane’s free grant, Gemini free Flash. Pin to a commit SHA for stability: ohjay-official/receipt@&lt;sha&gt;. This install has not been verified on a second repo.
             </p>
           </div>
         </div>

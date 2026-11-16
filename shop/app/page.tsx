@@ -17,7 +17,7 @@ const HOME_DESCRIPTION =
   "Receipt is a GitHub Action. It waits for the Vercel preview, runs Kane on the README How-to-test contract, and leaves the card on the pull request.";
 
 export const metadata: Metadata = {
-  ...pageMeta(`${SITE_NAME}. ${TAGLINE}`, HOME_DESCRIPTION, "Previewed. Verified."),
+  ...pageMeta(`${SITE_NAME}. ${TAGLINE}`, HOME_DESCRIPTION, "/", "Previewed. Verified."),
   title: { absolute: `${SITE_NAME}. ${TAGLINE}` },
 };
 

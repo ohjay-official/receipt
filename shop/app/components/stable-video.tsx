@@ -8,21 +8,29 @@ import { useEffect, useRef } from "react";
  */
 export default function StableVideo({
   src,
+  sources,
   poster,
   className,
-  eager = false,
+  preload = "metadata",
 }: {
-  src: string;
+  src?: string;
+  sources?: { src: string; type?: string; media?: string }[];
   poster?: string;
   className?: string;
-  eager?: boolean;
+  preload?: "none" | "metadata" | "auto";
 }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const sourceKey = sources?.map((item) => item.src).join("|") || src || "";
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     el.muted = true;
+    el.setAttribute("fetchpriority", "low");
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.pause();
+      return;
+    }
     const play = () => {
       const pending = el.play();
       if (pending) pending.catch(() => {});
@@ -32,23 +40,27 @@ export default function StableVideo({
         if (entry.isIntersecting) play();
         else el.pause();
       },
-      { rootMargin: eager ? "0px" : "200px", threshold: 0.01 },
+      { rootMargin: "200px", threshold: 0.01 },
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [src]);
+  }, [sourceKey]);
 
   return (
     <video
       ref={ref}
       className={className}
-      src={src}
       poster={poster}
-      autoPlay
       muted
       loop
       playsInline
-      preload={eager ? "auto" : "none"}
-    />
+      preload={preload}
+      {...{ fetchpriority: "low" }}
+    >
+      {sources?.map((item) => (
+        <source key={`${item.media || ""}-${item.src}`} src={item.src} type={item.type || "video/mp4"} media={item.media} />
+      ))}
+      {src ? <source src={src} type="video/mp4" /> : null}
+    </video>
   );
 }

@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { formatUsd, PLAN_NAME, PLAN_PERIOD, PRO_PLAN_USD, SHOP_NAME } from "@/lib/prices";
 import DemoBanner from "../../components/demo-banner";
+import { pageMeta } from "@/lib/meta";
+
+const CART_DESCRIPTION = "The demo cart. Choosing Pro continues to checkout. Nothing on this page is a real charge.";
 
 export const metadata: Metadata = {
+  ...pageMeta(`Cart — ${SHOP_NAME}`, CART_DESCRIPTION, "/shop/cart"),
   title: { absolute: `Cart — ${SHOP_NAME}` },
-  description: "The demo cart. Choosing Pro continues to checkout. Nothing on this page is a real charge.",
 };
 
 export default function CartPage() {

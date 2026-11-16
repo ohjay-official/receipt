@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { formatUsd, PLAN_NAME, PLAN_PERIOD, PRO_PLAN_USD, SHOP_NAME } from "@/lib/prices";
 import DemoBanner from "../components/demo-banner";
+import { pageMeta } from "@/lib/meta";
+
+const SHOP_DESCRIPTION = "Field & Ledger is the demo shop Kane reads. Pro is listed at $19 a month. There is no account and no real payment.";
 
 export const metadata: Metadata = {
+  ...pageMeta(`${SHOP_NAME} — Demo shop`, SHOP_DESCRIPTION, "/shop"),
   title: { absolute: `${SHOP_NAME} — Demo shop` },
-  description: "Field & Ledger is the demo shop Kane reads. Pro is listed at $19 a month. There is no account and no real payment.",
 };
 
 export default function ShopCatalogPage() {

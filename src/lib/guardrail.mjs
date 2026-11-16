@@ -136,9 +136,7 @@ Verify that checkout shows $19 or $29 for Pro. Do not fail if checkout shows $29
 
 export function isDemoCheatEnabled(env = process.env) {
   const flag = String(env.RECEIPT_DEMO_CHEAT || "").trim().toLowerCase();
-  if (flag === "1" || flag === "true" || flag === "yes") return true;
-  const branch = env.GITHUB_HEAD_REF || env.RECEIPT_HEAD_BRANCH || "";
-  return branch === "demo/cheat-refusal";
+  return flag === "1" || flag === "true" || flag === "yes";
 }
 
 // Keep matchGlob imported for tests that may re-export later.

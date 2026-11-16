@@ -45,7 +45,6 @@ export default function CapSection() {
             <div>
               <strong>Gemini fixer</strong>
               <span>fenced to shop/**</span>
-              <em>Online</em>
             </div>
           </article>
           <div className="rb-stubs">

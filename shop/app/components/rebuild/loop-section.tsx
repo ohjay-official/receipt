@@ -43,8 +43,9 @@ export default function LoopSection() {
           onMouseLeave={() => setPaused(false)}
         >
           <div className="rb-chrome">
-            <span>ohjay-official / receipt / pull/3</span>
-            <div className="rb-chrome-tabs" role="tablist">
+            <span className="rb-crumb-full">ohjay-official / receipt / pull/3</span>
+            <span className="rb-crumb-short">receipt / pull/3</span>
+            <div className="rb-chrome-tabs">
               <span>Conversation</span>
               <span aria-current="true">Checks</span>
               <span>Files changed</span>
@@ -90,7 +91,7 @@ export default function LoopSection() {
           </li>
           <li>
             <strong>Leaves a receipt on the PR</strong>
-            <p>The comment names the red run, the fix or the refusal, and the green run.</p>
+            <p>The comment shows Kane&apos;s verdict for each step, the attempt count, and a link to the evidence pack.</p>
           </li>
         </ul>
         <div className="rb-runs">

@@ -48,8 +48,6 @@ jobs:
        github.event.client_payload.environment != 'production')
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      RECEIPT_GIT_TOKEN: ${{ secrets.RECEIPT_GIT_TOKEN }}
     steps:
       - name: Checkout the deployment SHA
         uses: actions/checkout@v4
@@ -68,7 +66,10 @@ jobs:
           username: ${{ secrets.LT_USERNAME }}
           access-key: ${{ secrets.LT_ACCESS_KEY }}
           gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+          git-token: ${{ secrets.RECEIPT_GIT_TOKEN }}
         env:
+          RECEIPT_GIT_NAME: ohjay-official
+          RECEIPT_GIT_EMAIL: ohjay-official@users.noreply.github.com
           RECEIPT_PREVIEW_URL: ${{ github.event.inputs.preview_url || github.event.client_payload.url || '' }}
           RECEIPT_PREVIEW_SHA: ${{ github.event.client_payload.git.sha || github.event.pull_request.head.sha || github.event.deployment.sha || github.sha }}
           RECEIPT_VERCEL_PROJECT: receipt

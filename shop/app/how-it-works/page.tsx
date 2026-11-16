@@ -9,6 +9,7 @@ import { pageMeta } from "@/lib/meta";
 export const metadata: Metadata = pageMeta(
   "How it works",
   "Receipt starts Kane, pins what Kane saw, and when the contract fails offers one patch fenced to shop source. The cap is three receipt-fix commits.",
+  "/how-it-works",
 );
 
 const MOVES = [

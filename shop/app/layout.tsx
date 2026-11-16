@@ -15,6 +15,7 @@ const serif = Newsreader({
   subsets: ["latin"],
   variable: "--font-serif",
   display: "swap",
+  preload: false,
 });
 
 const sans = IBM_Plex_Sans({
@@ -22,6 +23,7 @@ const sans = IBM_Plex_Sans({
   weight: ["400", "500"],
   variable: "--font-sans",
   display: "swap",
+  preload: false,
 });
 
 const mono = IBM_Plex_Mono({
@@ -29,6 +31,7 @@ const mono = IBM_Plex_Mono({
   weight: ["400", "500"],
   variable: "--font-mono",
   display: "swap",
+  preload: false,
 });
 
 const plex = IBM_Plex_Serif({
@@ -36,13 +39,16 @@ const plex = IBM_Plex_Serif({
   weight: ["400", "500"],
   variable: "--font-plex",
   display: "swap",
+  preload: false,
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600"],
   variable: "--font-inter",
   display: "swap",
+  preload: true,
+  adjustFontFallback: true,
 });
 
 export const viewport: Viewport = {

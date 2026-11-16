@@ -58,13 +58,13 @@ export default function PreviewCards() {
             </article>
           ))}
         </div>
-        <div className="rb-dots" role="tablist" aria-label="Cards">
+        <div className="rb-dots" aria-label="Cards">
           {CARDS.map((card, index) => (
             <button
               key={card.kicker}
               type="button"
               aria-label={card.kicker}
-              aria-current={dot === index ? "true" : undefined}
+              aria-pressed={dot === index}
               onClick={() => {
                 const el = scroller.current;
                 if (!el) return;

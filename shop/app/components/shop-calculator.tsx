@@ -92,7 +92,7 @@ export default function ShopCalculator() {
             </div>
             <div className="rb-actions">
               <Link className="rb-btn rb-btn-paper" href="/shop">Open the demo shop</Link>
-              <Link className="rb-btn rb-btn-ghost" href="/shop/checkout">Open checkout</Link>
+              <Link className="rb-btn rb-btn-ink" href="/shop/checkout">Open checkout</Link>
             </div>
           </div>
         </div>

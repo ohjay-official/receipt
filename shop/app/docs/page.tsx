@@ -8,6 +8,7 @@ import { pageMeta } from "@/lib/meta";
 export const metadata: Metadata = pageMeta(
   "Docs",
   "Install the action, read the How-to-test contract, and see the guardrails. Receipt runs on GitHub Actions, Vercel previews, and Kane CLI.",
+  "/docs",
 );
 
 const CARDS = [

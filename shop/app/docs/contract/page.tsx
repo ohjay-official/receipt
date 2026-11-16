@@ -7,6 +7,7 @@ import { pageMeta } from "@/lib/meta";
 export const metadata: Metadata = pageMeta(
   "The contract",
   "The README How-to-test block has five required steps: Pro at $19, checkout at $19, LAUNCH10 to $17.10, and Pay after Phone layout (390px).",
+  "/docs/contract",
 );
 
 export default function ContractPage() {

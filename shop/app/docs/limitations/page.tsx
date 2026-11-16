@@ -7,6 +7,7 @@ import { pageMeta } from "@/lib/meta";
 export const metadata: Metadata = pageMeta(
   "Limitations",
   "Kane 0.10.4 replay ignores --url. Kane cannot open a 390px window. This project uses pull_request because GitHub Deployments events do not arrive.",
+  "/docs/limitations",
 );
 
 export default function LimitationsPage() {

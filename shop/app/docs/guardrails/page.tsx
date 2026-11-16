@@ -8,6 +8,7 @@ import { pageMeta } from "@/lib/meta";
 export const metadata: Metadata = pageMeta(
   "Guardrails",
   "The fixer may edit shop source only. Tests, the README contract, workflows, and the action are refused. Pull request #4 was refused for tests/checkout_test.md.",
+  "/docs/guardrails",
 );
 
 export default function GuardrailsPage() {
@@ -31,7 +32,7 @@ export default function GuardrailsPage() {
           <li>Deleting <code>##</code> steps or changing <code>PRO_PLAN_USD</code> away from 19 is refused as weakening.</li>
         </ul>
         <p>
-          On <a href={PR4.url}>pull request #4</a>, <code>RECEIPT_DEMO_CHEAT=1</code> made the fixer propose a weakening patch to <code>tests/checkout_test.md</code>. Receipt did not push. The card said “{PR4.note}”.
+          On <a href={PR4.url}>pull request #4</a>, Receipt fed the fixer path a scripted cheat diff (RECEIPT_DEMO_CHEAT) that weakens <code>tests/checkout_test.md</code>. The guardrail refused it and nothing was pushed. The card said “{PR4.note}”.
         </p>
         <p><Link href="/proof">The refused run</Link></p>
       </article>

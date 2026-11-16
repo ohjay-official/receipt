@@ -15,16 +15,18 @@ export default function SiteFrame({ children }: { children: React.ReactNode }) {
   if (shop) {
     return (
       <div className="page rx shop-site">
+        <a className="rb-skip" href="#main">Skip to content</a>
         <SiteMenu />
-        {children}
+        <div id="main" tabIndex={-1}>{children}</div>
         <VantixFooter />
       </div>
     );
   }
   return (
     <div className="page rx">
+      <a className="rb-skip" href="#main">Skip to content</a>
       {home ? null : <SiteMenu />}
-      {children}
+      <div id="main" tabIndex={-1}>{children}</div>
       <VantixFooter />
     </div>
   );

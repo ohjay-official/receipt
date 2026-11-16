@@ -2,10 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { formatUsd, PLAN_NAME, PLAN_PERIOD, PRO_PLAN_USD, SHOP_NAME } from "@/lib/prices";
 import DemoBanner from "../../components/demo-banner";
+import { pageMeta } from "@/lib/meta";
+
+const PLANS_DESCRIPTION = "Pro is published at $19 per month on the demo shop. That published price is the number the How-to-test contract checks.";
 
 export const metadata: Metadata = {
+  ...pageMeta(`Plans — ${SHOP_NAME}`, PLANS_DESCRIPTION, "/pricing"),
   title: { absolute: `Plans — ${SHOP_NAME}` },
-  description: "Pro is published at $19 per month on the demo shop. That published price is the number the How-to-test contract checks.",
 };
 
 export default function PricingPage() {

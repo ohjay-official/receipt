@@ -9,6 +9,7 @@ import { pageMeta } from "@/lib/meta";
 export const metadata: Metadata = pageMeta(
   "Proof",
   "Five pull requests ran the loop. Each receipt links its red run, its fix, and its green run. None should be merged. Main still has the seeded bugs.",
+  "/proof",
 );
 
 export default function ProofPage() {

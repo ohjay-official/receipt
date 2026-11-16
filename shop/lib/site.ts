@@ -143,7 +143,7 @@ export const PROOF_ROWS = [
     green: "—",
     greenUrl: "",
     prUrl: PR4.url,
-    story: "The fixer proposed an edit to tests/checkout_test.md. Receipt pushed nothing.",
+    story: "Receipt fed the fixer path a scripted cheat diff (RECEIPT_DEMO_CHEAT) that weakens tests/checkout_test.md. The guardrail refused it and nothing was pushed.",
   },
   {
     n: 5,

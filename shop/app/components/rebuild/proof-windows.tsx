@@ -22,9 +22,9 @@ export default function ProofWindows({ bare = false }: { bare?: boolean }) {
     >
       <div className="rb-chrome">
         <span>ohjay-official / receipt / pulls</span>
-        <div className="rb-chrome-tabs rb-pr-tabs" role="tablist">
+        <div className="rb-chrome-tabs rb-pr-tabs">
           {PROOF_ROWS.map((row, index) => (
-            <button key={row.n} type="button" aria-selected={active === index} onClick={() => setActive(index)}>
+            <button key={row.n} type="button" aria-pressed={active === index} onClick={() => setActive(index)}>
               #{row.n}
             </button>
           ))}
@@ -35,9 +35,9 @@ export default function ProofWindows({ bare = false }: { bare?: boolean }) {
           <MiniSlip key={row.n} row={row} active={active === index} />
         ))}
       </div>
-      <div className="rb-dots" role="tablist" aria-label="Pull requests">
+      <div className="rb-dots" aria-label="Pull requests">
         {PROOF_ROWS.map((row, index) => (
-          <button key={row.n} type="button" aria-label={row.title} aria-current={active === index ? "true" : undefined} onClick={() => setActive(index)} />
+          <button key={row.n} type="button" aria-label={row.title} aria-pressed={active === index} onClick={() => setActive(index)} />
         ))}
       </div>
     </div>

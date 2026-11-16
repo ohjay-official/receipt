@@ -2,19 +2,19 @@
 
 Don’t merge a preview without a Receipt.
 
-A drop-in GitHub Action that runs [Kane CLI](https://www.testmuai.com/docs/kane-cli-introduction) on the Vercel preview of a pull request, against a tagged How-to-test contract in this README. Kane pins a sealed evidence pack on the PR. If the preview is lying, a fixer may patch **allowlisted app source only** (`shop/**`) — never this contract, never the workflow — and Kane replays the same saved `_test.md`.
+A drop-in GitHub Action that runs [Kane CLI](https://www.testmuai.com/support/docs/kane-cli-introduction/) on the Vercel preview of a pull request, against a tagged How-to-test contract in this README. Kane posts an evidence pack on the PR. If the preview is lying, a fixer may patch **allowlisted app source only** (`shop/**`) — never this contract, never the workflow — and Kane runs the same test again.
 
 ---
 
 ## For Judges (about two minutes)
 
 1. Open the live site: https://receipt-taupe-one.vercel.app — home is the Receipt product, with paths to How it works, Docs, Proof, and the demo shop. The fixture Kane guards is at `/shop`.
-2. Open `/pricing` (also at `/shop/pricing`). Pro is **$19**. Open `/checkout` (also at `/shop/checkout`). The total is **$29**. Enter **LAUNCH10** — the total should become **$17.10** but does not move. Click **Phone layout (390px)**, then **Pay** — Pay is covered. Those are the three seeded bugs. Production stays on `main`.
+2. Open `/pricing` (also at `/shop/pricing`). Pro is **$19**. Open `/checkout` (also at `/shop/checkout`). The total is **$29**. Enter **LAUNCH10** — the total should become **$17.10** but does not move. Click **Phone layout (390px)**, then **Pay** — Pay is covered (preview) or refuses with "Pay could not be reached." Those are the three seeded bugs. Production stays on `main`.
 3. Open the three-bug proof PR (leave it open): https://github.com/ohjay-official/receipt/pull/3
 4. The Receipt comment is a card: **passed**, all five Kane steps green, attempts **1 / 3**. The catch is in the red run: Kane failed “Checkout must show $19 for Pro” (coupon and Pay were skipped after that first required failure).
 5. See `receipt-fix: 1` (`186ecdc`). It touches only `shop/lib/prices.ts` and `shop/lib/checkout.ts` — checkout $19, LAUNCH10 yields $17.10, Pay overlay off. The later Receipt run is green, including “Pay works in the phone layout.”
 6. Open the refusal proof PR (leave it open): https://github.com/ohjay-official/receipt/pull/4  
-   Kane failed the $29 checkout again. The fixer proposed a cheating edit to the Kane test. Receipt did **not** push. The card says **Fix refused:** `Receipt refused fix: touched tests/checkout_test.md`.
+   Kane failed the $29 checkout again. Receipt fed the fixer path a scripted cheat diff (RECEIPT_DEMO_CHEAT) that weakens tests/checkout_test.md. The guardrail refused it and nothing was pushed. The card says **Fix refused:** `Receipt refused fix: touched tests/checkout_test.md`.
 
 Proof (do not trust a green badge without the clip):
 
@@ -111,9 +111,7 @@ jobs:
       (github.event_name == 'repository_dispatch' && github.event.action == 'vercel.deployment.ready') ||
       (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
     runs-on: ubuntu-latest
-    timeout-minutes: 30
-    env:
-      RECEIPT_GIT_TOKEN: ${{ secrets.RECEIPT_GIT_TOKEN }}
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -123,12 +121,19 @@ jobs:
       - uses: ohjay-official/receipt@main
         with:
           test-file: tests/receipt_checkout_test.md
+          production-url: ${{ vars.RECEIPT_PRODUCTION_URL }}
+          allowlist: "<your app path>/**"
           username: ${{ secrets.LT_USERNAME }}
           access-key: ${{ secrets.LT_ACCESS_KEY }}
           gemini-api-key: ${{ secrets.GEMINI_API_KEY }}
+          git-token: ${{ secrets.RECEIPT_GIT_TOKEN }}
+        env:
+          RECEIPT_VERCEL_PROJECT: <your-vercel-project>
+          RECEIPT_VERCEL_SCOPE: <your-vercel-team-slug>
+          RECEIPT_WAIT_FOR_VERCEL_STATUS: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
 ```
 
-**TBD-post-build:** pin `@main` to a release tag once one exists.
+Pin to a commit SHA for stability: `ohjay-official/receipt@<sha>`. This install has not been verified on a second repo.
 
 The Kane command the action runs:
 
@@ -136,7 +141,7 @@ The Kane command the action runs:
 kane-cli testmd run tests/receipt_checkout_test.md   --agent --headless --timeout 300 --max-steps 40   --url "$PREVIEW_URL"   --name receipt-checkout   --username "$LT_USERNAME" --access-key "$LT_ACCESS_KEY"
 ```
 
-`--url` is the start URL for a fresh author run. When `tests/output-receipt_checkout/` recordings are committed, unchanged steps replay from them. Because Kane 0.10.4 replay ignores `--url` (see the honest note above), Receipt remaps those recordings onto the current preview before each run. The original `tests/output-checkout/` recordings were removed after a stale Test Manager write lock on that test id blocked PR #3 for over 50 minutes; the next live run authors a new test. Recordings will be committed again after a successful authoring.
+`--url` is the start URL for a fresh author run. No recordings are committed, so each run authors fresh. Because Kane 0.10.4 replay ignores `--url` when recordings are present (see the honest note above), Receipt remaps any recorded Vercel origin onto the current preview before each run. The original `tests/output-checkout/` recordings were removed after a stale Test Manager write lock on that test id blocked PR #3 for over 50 minutes.
 
 ---
 
