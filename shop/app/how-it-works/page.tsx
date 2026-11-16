@@ -13,37 +13,91 @@ const MOVES = [
     pill: "Preview",
     title: <>Wait for Vercel.<br />Then remap the origin.</>,
     lead: "On a pull request, Receipt waits for the Vercel commit status and rewrites the recorded start URL onto that preview.",
-    log: "vercel commit status: success\nremap origin → preview\nkane:how-to-test\npull request #3",
+    log: `# pull request #3
+on: pull_request
+wait: Vercel commit status
+context: Vercel
+state: success
+remap: recorded origin → preview url
+contract: <!-- kane:how-to-test -->
+next: start Kane on that preview`,
   },
   {
     id: "kane",
     pill: "Kane",
     title: <>Kane reads the contract.<br />A miss exits 1.</>,
     lead: "The How-to-test block is five required steps. On PR #3, step 3 failed because checkout showed $29.",
-    log: "kane exit 1\nstep 3 of 5 failed\ncheckout showed $29\nrun 43698574333",
+    log: `Kane run 43698574333
+exit 1
+1  passed   Open /pricing. Pro is $19
+2  passed   Choose Pro, open /checkout
+3  failed   Checkout must show $19
+           saw $29
+4  skipped  LAUNCH10 must total $17.10
+5  skipped  Phone layout (390px), then Pay`,
   },
   {
     id: "fix",
     pill: "Fix",
     title: <>One fenced patch.<br />Shop source only.</>,
     lead: "Gemini may edit shop/** application source. Commit 186ecdc changed shop/lib/prices.ts and shop/lib/checkout.ts only.",
-    log: "receipt-fix: 1\n186ecdc\nshop/lib/prices.ts\nshop/lib/checkout.ts",
+    diff: true,
+    log: `receipt-fix: 1  186ecdc
+shop/lib/prices.ts
+- export const CHECKOUT_PRO_USD = 29;
++ export const CHECKOUT_PRO_USD = 19;
+shop/lib/checkout.ts
+- return proPrice - handlingFeeUsd * 0.10;
++ return proPrice - proPrice * 0.10;
+- export const SEED_BLOCK_PAY_ON_MOBILE = true;
++ export const SEED_BLOCK_PAY_ON_MOBILE = false;`,
   },
   {
     id: "reverify",
     pill: "Re-verify",
     title: <>Same contract.<br />New preview.</>,
     lead: "A receipt-fix commit is pushed with the git token. Vercel builds again. Kane runs the same five steps, cap 3.",
-    log: "kane exit 0\n5 steps passed\ngreen run 43699955024\nattempt 1 of 3",
+    log: `new preview after 186ecdc
+Kane run 43699955024
+exit 0
+1  passed  Pro is $19
+2  passed  Choose Pro
+3  passed  Checkout shows $19
+4  passed  LAUNCH10 is $17.10
+5  passed  Pay in Phone layout (390px)
+attempt 1 of 3`,
   },
   {
     id: "receipt",
     pill: "Receipt",
     title: <>The card stays<br />on the pull request.</>,
     lead: "The comment lists what Kane saw, the fix or the refusal, the attempt count, and the evidence pack.",
-    log: "Pull request #3\nVERIFIED\nred 43698574333\nfix 186ecdc\ngreen 43699955024",
+    log: `comment on pull/3
+VERIFIED
+red    43698574333
+fix    186ecdc
+green  43699955024
+files  shop/lib/prices.ts
+       shop/lib/checkout.ts
+cap    1 / 3`,
   },
 ];
+
+function LogPanel({ log, diff }: { log: string; diff?: boolean }) {
+  return (
+    <div className="rb-terminal">
+      <pre>
+        {diff
+          ? log.split("\n").map((line) => (
+            <span key={line} className={line.startsWith("+") ? "is-add" : line.startsWith("-") ? "is-del" : undefined}>
+              {line}{"\n"}
+            </span>
+          ))
+          : log}
+      </pre>
+    </div>
+  );
+}
 
 export default function HowItWorksPage() {
   return (
@@ -86,7 +140,7 @@ export default function HowItWorksPage() {
               <h2 className="rb-h2">{move.title}</h2>
               <p className="rb-lead">{move.lead}</p>
             </div>
-            <div className="rb-terminal"><pre>{move.log}</pre></div>
+            <LogPanel log={move.log} diff={"diff" in move && move.diff} />
           </div>
         </section>
       ))}

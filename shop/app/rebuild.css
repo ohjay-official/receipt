@@ -7,6 +7,14 @@
 }
 
 .rx-hero { background: #202a36; }
+.page.rx .rx-hero .rx-sub {
+  display: inline-block;
+  margin: 24px auto;
+  padding: 6px 14px;
+  color: #202a36;
+  background: rgba(244, 241, 234, 0.92);
+  border-radius: 8px;
+}
 .rx-hero-fade {
   height: 300px;
   background: linear-gradient(to top, #202a36 0%, #202a36 18%, rgba(32, 42, 54, 0.55) 58%, rgba(32, 42, 54, 0) 100%);
@@ -71,6 +79,9 @@ main.rb > .rb-rail { top: 96px; bottom: 24px; }
 
 .rb-sec { padding: 48px 0 32px; }
 .rb-s1 { padding-top: 24px; }
+@media (min-width: 900px) {
+  .rb-s1 .rb-node { top: 208px; }
+}
 
 .rb-rail {
   position: absolute;
@@ -304,16 +315,16 @@ main.rb > .rb-rail { top: 96px; bottom: 24px; }
 .rb-verdict.is-bad { color: #b4232f; }
 .rb-float dl, .rb-slip dl { margin: 12px 0 0; display: grid; gap: 6px; }
 .rb-float dl div, .rb-slip dl div { display: flex; justify-content: space-between; gap: 8px; font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px; }
+.rb-float dd, .rb-slip dd { margin: 0; overflow-wrap: anywhere; text-align: right; }
 .rb-float dt, .rb-slip dt { color: #5c6570; }
 .rb-float a, .rb-slip a, .rb-ledger a { color: #202a36; }
 .rb-stamp {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
+  position: static;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-width: 92px;
+  margin-top: 16px;
   padding: 6px 8px;
   border: 2px solid #202a36;
   color: #202a36;
@@ -322,6 +333,7 @@ main.rb > .rb-rail { top: 96px; bottom: 24px; }
   font-weight: 500;
   letter-spacing: 0.08em;
   transform: rotate(-8deg);
+  transform-origin: left center;
 }
 .rb-stamp.is-bad { border-color: #b4232f; color: #b4232f; }
 
@@ -784,6 +796,7 @@ main.rb > .rb-rail { top: 96px; bottom: 24px; }
 
 .rb-install { padding-bottom: 0; }
 .rb-install-grid { display: grid; gap: 28px; }
+.rb-install-grid > *, .rb-printer, .rb-print { min-width: 0; max-width: 100%; }
 @media (min-width: 900px) {
   .rb-install-grid { grid-template-columns: minmax(0, 1fr) minmax(280px, 520px); align-items: start; }
   .rb-install-grid > .rb-node { display: none; }
@@ -808,20 +821,21 @@ main.rb > .rb-rail { top: 96px; bottom: 24px; }
   background: #18202a;
   box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
 }
-.rb-print { margin-top: -4px; padding: 20px 18px 24px; }
+.rb-print { margin-top: -4px; padding: 20px 18px 24px; overflow: hidden; }
 .rb-print pre {
   margin: 12px 0;
-  max-height: 240px;
-  overflow: auto;
+  max-width: 100%;
+  overflow-x: auto;
   padding: 12px;
   background: rgba(32, 42, 54, 0.06);
   color: #202a36;
   font-family: var(--font-mono), ui-monospace, monospace;
   font-size: 12px;
   line-height: 18px;
-  white-space: pre;
+  white-space: pre-wrap;
 }
-.rb-fine { margin: 12px 0 0; font-size: 13px; line-height: 20px; color: #3d4654; }
+.rb-fine { margin: 12px 0 0; max-width: 100%; font-size: 13px; line-height: 20px; color: #3d4654; overflow-wrap: anywhere; }
+.rb-hint { margin: 8px 0 0; font-size: 14px; line-height: 20px; color: #a3a9b8; }
 
 .rb-foot {
   display: flex;
@@ -840,6 +854,10 @@ main.rb > .rb-rail { top: 96px; bottom: 24px; }
   place-items: center;
 }
 @media (min-width: 900px) { .rb-scene { height: 360px; } }
+@media (max-width: 899px) {
+  .rb-scene { height: 280px; align-items: start; padding-top: 28px; }
+  .rb-ring { bottom: 20px; right: 16px; }
+}
 .rb-arc {
   position: absolute;
   left: 50%;
@@ -865,15 +883,19 @@ main.rb > .rb-rail { top: 96px; bottom: 24px; }
   -webkit-background-clip: text;
   background-clip: text;
 }
-@media (min-width: 900px) { .rb-wordmark { font-size: 220px; } }
+@media (min-width: 900px) {
+  .rb-wordmark { font-size: 220px; }
+}
 .rb-ring {
   position: absolute;
   z-index: 2;
-  left: 50%;
-  top: 46%;
-  width: 96px;
-  height: 96px;
-  transform: translate(-50%, -50%);
+  left: auto;
+  right: 16px;
+  top: auto;
+  bottom: 12px;
+  width: 56px;
+  height: 56px;
+  transform: none;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -882,6 +904,16 @@ main.rb > .rb-rail { top: 96px; bottom: 24px; }
   backdrop-filter: blur(12px);
   color: #eef0f5;
   text-decoration: none;
+}
+@media (min-width: 900px) {
+  .rb-ring {
+    right: auto;
+    bottom: auto;
+    left: calc(50% + 420px);
+    top: 42%;
+    width: 96px;
+    height: 96px;
+  }
 }
 .rb-vert {
   position: absolute;
@@ -1021,8 +1053,10 @@ main.rb > .rb-rail { top: 96px; bottom: 24px; }
   border: 1px solid rgba(238, 240, 245, 0.1);
   border-radius: 10px;
   overflow: hidden;
-  min-height: 280px;
+  align-self: start;
 }
+.rb-terminal .is-add { color: #b7dfc6; }
+.rb-terminal .is-del { color: #f0b4b8; }
 .rb-terminal pre, .rb-readme pre {
   margin: 0;
   padding: 16px;

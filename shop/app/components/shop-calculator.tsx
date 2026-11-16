@@ -59,6 +59,7 @@ export default function ShopCalculator() {
             <section>
               <h3>Fix attempt {attempt} of 3</h3>
               <input className="rb-slider" type="range" min={1} max={3} step={1} value={attempt} aria-label="Fix attempt" onChange={(event) => setAttempt(Number(event.target.value))} />
+              <p className="rb-hint">Attempt {attempt} of 3 reads the cap. The real fix on PR #3 was attempt 1, commit 186ecdc.</p>
             </section>
             <section>
               <h3>What else is seeded?</h3>
@@ -95,7 +96,6 @@ export default function ShopCalculator() {
             </div>
           </div>
         </div>
-        <p className="rb-lead" style={{ marginLeft: 0 }}>Attempt {attempt} of 3 is a reading of the cap. The real fix on PR #3 was attempt 1, commit 186ecdc.</p>
       </div>
     </section>
   );
