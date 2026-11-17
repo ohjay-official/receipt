@@ -202,3 +202,7 @@ The production deploy is a multi-page Receipt site, not a one-page shop mock. `/
 - `.github/workflows/receipt.yml` — demo workflow (`pull_request` / `repository_dispatch` / `deployment_status` / `workflow_dispatch`)
 - `.github/workflows/ci.yml` — unit tests and `next build`
 - `docs/` — brief, spec, plan, research pack
+
+## License
+
+MIT. See [LICENSE](LICENSE).

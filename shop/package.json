@@ -1,5 +1,6 @@
 {
   "name": "receipt-shop",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "NEXT_TELEMETRY_DISABLED=1 next dev",

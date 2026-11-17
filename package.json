@@ -1,5 +1,6 @@
 {
   "name": "receipt",
+  "license": "MIT",
   "private": true,
   "description": "Drop-in GitHub Action: Kane on the Vercel preview, evidence on the PR, fixer on allowlisted app source.",
   "type": "module",

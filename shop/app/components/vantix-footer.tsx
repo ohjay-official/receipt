@@ -55,6 +55,7 @@ export default function VantixFooter() {
         <p className="rb-foot-meta">
           <a href={REPO_URL}>GitHub</a>
           <Link href="/privacy">Privacy</Link>
+          <a href={`${REPO_URL}/blob/redesign-home/LICENSE`}>MIT License</a>
           <a href={HACKATHON_URL}>Kane CLI hackathon</a>
         </p>
         <p className="rb-status"><i />Seeded bugs live on main</p>
