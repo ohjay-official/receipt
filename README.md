@@ -1,6 +1,6 @@
 # Receipt
 
-**For judges:** open the [live site](https://receipt-taupe-one.vercel.app), tap **Demo shop**, tap **View the plan**. Pro is **$19**. Tap **Choose Pro**. Checkout shows **$29**. Then open [pull request #3](https://github.com/ohjay-official/receipt/pull/3) and read **Receipt: passed**. The same checks, written as 5 steps, are in [See the Bug in Your Browser](#see-the-bug-in-your-browser-5-steps-no-account-nothing-to-install).
+**For judges:** open the [live site](https://receiptci.vercel.app), tap **Demo shop**, tap **View the plan**. Pro is **$19**. Tap **Choose Pro**. Checkout shows **$29**. Then open [pull request #3](https://github.com/ohjay-official/receipt/pull/3) and read **Receipt: passed**. The same checks, written as 5 steps, are in [See the Bug in Your Browser](#see-the-bug-in-your-browser-5-steps-no-account-nothing-to-install).
 
 <p align="center">
   <img src="docs/images/home-phone.jpg" alt="Phone view of the live Receipt home page: a jet engine behind the words Previewed. Verified. and the line Don't merge a preview without a Receipt." width="260">
@@ -27,7 +27,7 @@ Use your phone, or narrow a desktop browser to 390px wide for steps 3 and 4. Thi
 
 About 6 taps: open Plans, **Choose Pro**, tap the coupon box, **Apply**, tap the covered **Pay** control, open the pull request. A headless Chrome run at 390px wide against production on 17 Nov 2026 took 2.9 seconds for those clicks and the two page loads. A person reading along takes longer.
 
-1. Open [Plans](https://receipt-taupe-one.vercel.app/pricing). **Pro** is **$19** per month. The line under the card says checkout is a separate page and the total there can disagree.
+1. Open [Plans](https://receiptci.vercel.app/pricing). **Pro** is **$19** per month. The line under the card says checkout is a separate page and the total there can disagree.
 2. Tap **Choose Pro**. The checkout page shows **Total due today** **$29**.
 3. The coupon box's placeholder is **LAUNCH10**. Tap the box, type **LAUNCH10**, and tap **Apply**. The total stays **$29**.
 4. Tap **Pay**. The tap lands on the pay blocker, not on **Pay**.
@@ -123,7 +123,7 @@ Luma's event page, read 17 Nov 2026, says you do not have to pick a lane. The fo
 
 | Lane, as Luma names it | What in this repo fits | Where to check |
 | --- | --- | --- |
-| Lane 1: Apps that verify themselves | The shop is the fixture the Action guards. It is not the product. | [Live shop](https://receipt-taupe-one.vercel.app/shop) |
+| Lane 1: Apps that verify themselves | The shop is the fixture the Action guards. It is not the product. | [Live shop](https://receiptci.vercel.app/shop) |
 | Lane 2: Verification baked into your workflow | A GitHub Action runs Kane on the pull request preview and posts the receipt. | [Pull request #3](https://github.com/ohjay-official/receipt/pull/3), [action.yml](action.yml) |
 | Lane 3: Browser agents in the wild | Not this entry. Kane is not used here to book, cancel, or browse for a person. |  |
 | Lane 4: Requirements that test themselves | The contract is a README block, not a PRD pipeline. | [How to Test](#how-to-test) |
@@ -140,7 +140,7 @@ Not recorded. Luma's page says judges stop at 3:00. kaneclihack.sh says a YouTub
 
 ## Live URL
 
-https://receipt-taupe-one.vercel.app
+https://receiptci.vercel.app
 
 `/pricing` and `/checkout` are aliases of `/shop/pricing` and `/shop/checkout`, so the contract paths stay valid. Checked 17 Nov 2026: both aliases respond, Plans shows $19, checkout shows $29.
 
@@ -278,7 +278,7 @@ It does not promise that a green receipt means the whole product is correct. It 
 
 ## Privacy
 
-The marketing site does not ask you to sign in, and the demo shop does not charge a card. Vercel Web Analytics is mounted in the shop layout. Vercel also keeps request logs for hosting. If you install the Action, the preview URL and Kane's screenshots go to TestMu AI, and the shop source plus Kane's result go to Google Gemini, using secrets in your repository. The details are on the [privacy page](https://receipt-taupe-one.vercel.app/privacy).
+The marketing site does not ask you to sign in, and the demo shop does not charge a card. Vercel Web Analytics is mounted in the shop layout. Vercel also keeps request logs for hosting. If you install the Action, the preview URL and Kane's screenshots go to TestMu AI, and the shop source plus Kane's result go to Google Gemini, using secrets in your repository. The details are on the [privacy page](https://receiptci.vercel.app/privacy).
 
 ## Repository
 
@@ -293,7 +293,7 @@ The marketing site does not ask you to sign in, and the demo shop does not charg
 | `docs/` | Brief, spec, research, and these images. Design notes are in `docs/design/`. |
 | `LICENSE` | MIT, copyright 2026 ohjay-official. |
 
-Docs on the site: [install](https://receipt-taupe-one.vercel.app/docs/install), [contract](https://receipt-taupe-one.vercel.app/docs/contract), [configuration](https://receipt-taupe-one.vercel.app/docs/configuration), [guardrails](https://receipt-taupe-one.vercel.app/docs/guardrails), [limitations](https://receipt-taupe-one.vercel.app/docs/limitations), [proof](https://receipt-taupe-one.vercel.app/proof), [privacy](https://receipt-taupe-one.vercel.app/privacy).
+Docs on the site: [install](https://receiptci.vercel.app/docs/install), [contract](https://receiptci.vercel.app/docs/contract), [configuration](https://receiptci.vercel.app/docs/configuration), [guardrails](https://receiptci.vercel.app/docs/guardrails), [limitations](https://receiptci.vercel.app/docs/limitations), [proof](https://receiptci.vercel.app/proof), [privacy](https://receiptci.vercel.app/privacy).
 
 ## Built During the Kane CLI Online Hackathon
 

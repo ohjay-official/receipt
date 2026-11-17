@@ -2,7 +2,7 @@
 export const SITE_NAME = "Receipt";
 export const TAGLINE = "Don't merge a preview without a Receipt.";
 export const REPO_URL = "https://github.com/ohjay-official/receipt";
-export const PRODUCTION_URL = "https://receipt-taupe-one.vercel.app";
+export const PRODUCTION_URL = "https://receiptci.vercel.app";
 
 export const NAV = [
   { href: "/how-it-works", label: "How it works" },
