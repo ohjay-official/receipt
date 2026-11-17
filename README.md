@@ -1,6 +1,6 @@
 # Receipt
 
-**For judges:** open the [live site](https://receipt-taupe-one.vercel.app), tap **Demo shop**, tap **View the plan**. Pro is **$19**. Tap **Choose Pro**. Checkout shows **$29**. Then open [pull request #3](https://github.com/ohjay-official/receipt/pull/3) and read **Receipt: passed**.
+**For judges:** open the [live site](https://receipt-taupe-one.vercel.app), tap **Demo shop**, tap **View the plan**. Pro is **$19**. Tap **Choose Pro**. Checkout shows **$29**. Then open [pull request #3](https://github.com/ohjay-official/receipt/pull/3) and read **Receipt: passed**. The same checks, written as 5 steps, are in [See the Bug in Your Browser](#see-the-bug-in-your-browser-5-steps-no-account-nothing-to-install).
 
 <p align="center">
   <img src="docs/images/home-phone.jpg" alt="Phone view of the live Receipt home page: a jet engine behind the words Previewed. Verified. and the line Don't merge a preview without a Receipt." width="260">
@@ -12,29 +12,37 @@ A preview can look finished and still be wrong. Receipt is a GitHub Action that 
 
 ## Quick Links
 
-| What | What you need |
+| What | Steps and what you need |
 | --- | --- |
 | Watch the film | TBD-post-build: demo video |
-| See the $19 plan charge $29 | The live site. [Try It](#try-it) |
+| See the $19 plan charge $29 | 5 steps, 6 taps, any browser, no account. [See the Bug in Your Browser](#see-the-bug-in-your-browser-5-steps-no-account-nothing-to-install) |
 | Read the proof | Pull requests #3 and #4, left open. [Proof It's Real](#proof-its-real) |
-| Install the Action | A public GitHub repo on Vercel, and four secret names. [Try It](#try-it) |
-| The lane and the four scores | [Tracks](#tracks) |
-| How it was built | [Built During the Kane CLI Online Hackathon](#built-during-the-kane-cli-online-hackathon) |
-| Setup steps | [Try It](#try-it) |
+| Install the Action | 5 steps, a public GitHub repo on Vercel, four secret names. [Install It on Your Repo](#install-it-on-your-repo-5-steps) |
+| The lane and the four scores | Read one table. [Tracks](#tracks) |
+| How it was built | The commit list. [Built During the Kane CLI Online Hackathon](#built-during-the-kane-cli-online-hackathon) |
 
-## Try It
+## See the Bug in Your Browser (5 steps, no account, nothing to install)
 
-These are the setup steps. The live shop is the fixture Kane guards. No account on this site, and no card is charged.
+Use your phone, or narrow a desktop browser to 390px wide for steps 3 and 4. This is the live shop, not an install. No account on this site, and no card is charged.
+
+About 6 taps: open Plans, **Choose Pro**, tap the coupon box, **Apply**, tap the covered **Pay** control, open the pull request. A headless Chrome run at 390px wide against production on 17 Nov 2026 took 2.9 seconds for those clicks and the two page loads. A person reading along takes longer.
 
 1. Open [Plans](https://receipt-taupe-one.vercel.app/pricing). **Pro** is **$19** per month. The line under the card says checkout is a separate page and the total there can disagree.
 2. Tap **Choose Pro**. The checkout page shows **Total due today** **$29**.
-3. The coupon box's placeholder is **LAUNCH10**. Type **LAUNCH10** and tap **Apply**. The total stays **$29**. Checked in a 390px-wide browser on 17 Nov 2026.
-4. On that same 390px width, **Pay** is covered by the page's pay blocker. A click lands on the blocker, not on **Pay**.
+3. The coupon box's placeholder is **LAUNCH10**. Tap the box, type **LAUNCH10**, and tap **Apply**. The total stays **$29**.
+4. Tap **Pay**. The tap lands on the pay blocker, not on **Pay**.
 5. Open [pull request #3](https://github.com/ohjay-official/receipt/pull/3). The Receipt comment says **passed**, attempts **1 / 3**, and all five Kane steps passed. That comment is the green re-check. The red catch is the failed run [43698574333](https://github.com/ohjay-official/receipt/actions/runs/43698574333), not a second comment. The fixer commit is [`186ecdc`](https://github.com/ohjay-official/receipt/commit/186ecdc).
 
 You just saw the three seeded bugs on production, and the pull request where Kane caught them and the fixer was allowed to patch them.
 
-To run the same Action on your own public repo, add secrets `LT_USERNAME`, `LT_ACCESS_KEY`, `GEMINI_API_KEY`, and `RECEIPT_GIT_TOKEN` (names only), set the repo variable `RECEIPT_PRODUCTION_URL`, and add this workflow. Deployment Protection on the Vercel project has to be off, or Kane hits a login wall. This install has not been tried on a second repo. Pin the Action to a commit SHA when you want it to stay still: `ohjay-official/receipt@<sha>`.
+## Install It on Your Repo (5 steps)
+
+This has not been tried on a second repo. Pin the Action to a commit SHA when you want it to stay still: `ohjay-official/receipt@<sha>`.
+
+1. On your public GitHub repo, add four secrets, names only: `LT_USERNAME`, `LT_ACCESS_KEY`, `GEMINI_API_KEY`, and `RECEIPT_GIT_TOKEN`.
+2. Set the repo variable `RECEIPT_PRODUCTION_URL` to your production URL.
+3. Turn off Vercel Deployment Protection. If it stays on, Kane hits a login wall.
+4. Add this workflow file. Replace the placeholders with your app path and Vercel project.
 
 ```yaml
 # .github/workflows/receipt.yml
@@ -82,6 +90,8 @@ jobs:
           RECEIPT_VERCEL_SCOPE: <your-vercel-team-slug>
           RECEIPT_WAIT_FOR_VERCEL_STATUS: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
 ```
+
+5. Open a pull request. Receipt starts on `pull_request`. The comment on the pull request is the receipt.
 
 ## Proof It's Real
 
@@ -218,7 +228,7 @@ None of these needs a TestMu login except the evidence packs, which need a GitHu
 <details>
 <summary><strong>1. The live shop (a browser, no install)</strong></summary>
 
-The five steps in [Try It](#try-it). Plans, Choose Pro, Apply on LAUNCH10, the covered Pay button, then pull request #3.
+The five steps in [See the Bug in Your Browser](#see-the-bug-in-your-browser-5-steps-no-account-nothing-to-install). Plans, Choose Pro, Apply on LAUNCH10, the covered Pay button, then pull request #3.
 
 </details>
 
@@ -300,7 +310,7 @@ The public rules do not use numbered rule ids. These are the rules those pages s
 | Rule, in the page's words | Where it is answered |
 | --- | --- |
 | Repo initialized on or after 12 November ([Luma](https://luma.com/kanecli-online-hackathon), [kaneclihack.sh](https://www.kaneclihack.sh/)) | `7ab4374` on 15 Nov 2026 |
-| Include a README with setup steps (Luma) | [Try It](#try-it) |
+| Include a README with setup steps (Luma) | [Install It on Your Repo](#install-it-on-your-repo-5-steps) |
 | You must have run Kane CLI (both pages) | The runs linked in [Proof It's Real](#proof-its-real) |
 | Public repo, YouTube demo, two posts (kaneclihack.sh) | The repo is public. The video and the posts are not done. See [Demo video](#demo-video) and [Launch buzz](#launch-buzz). |
 
