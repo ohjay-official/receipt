@@ -57,6 +57,7 @@ export default function VantixFooter() {
           <Link href="/privacy">Privacy</Link>
           <a href={`${REPO_URL}/blob/main/LICENSE`}>MIT License</a>
           <a href={HACKATHON_URL}>Kane CLI hackathon</a>
+          <a href="https://youtu.be/mU3JYazU7XM">Demo</a>
         </p>
         <p className="rb-status"><i />Seeded bugs live on main</p>
         <p>© 2026 Receipt · Built for the Kane CLI hackathon</p>

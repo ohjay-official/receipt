@@ -14,7 +14,9 @@ A preview can look finished and still be wrong. Receipt is a GitHub Action that 
 
 | What | Steps and what you need |
 | --- | --- |
-| Watch the film | TBD-post-build: demo video |
+| watch the film | [demo video](https://youtu.be/mU3JYazU7XM) |
+| posts | [launch post](https://x.com/Oh_Jay0/status/2122967519400988987) and [second post](https://x.com/Oh_Jay0/status/2123448763549122669) |
+| live site | [https://receiptci.vercel.app](https://receiptci.vercel.app) |
 | See the $19 plan charge $29 | 5 steps, 6 taps, any browser, no account. [See the Bug in Your Browser](#see-the-bug-in-your-browser-5-steps-no-account-nothing-to-install) |
 | Read the proof | Pull requests #3 and #4, left open. [Proof It's Real](#proof-its-real) |
 | Install the Action | 5 steps, a public GitHub repo on Vercel, four secret names. [Install It on Your Repo](#install-it-on-your-repo-5-steps) |
@@ -136,7 +138,7 @@ Receipt is a GitHub Action for someone who is about to merge a Vercel preview. I
 
 ## Demo video
 
-Not recorded. Luma's page says judges stop at 3:00. kaneclihack.sh says a YouTube video of about 3 to 5 minutes. The film will be YouTube, unlisted, at or under 3:00, so both pages are covered. The only placeholder is the film line in [Quick Links](#quick-links).
+the film is up. [demo video](https://youtu.be/mU3JYazU7XM)
 
 ## Live URL
 
@@ -146,7 +148,7 @@ https://receiptci.vercel.app
 
 ## Launch buzz
 
-kaneclihack.sh requires at least two different public posts. None are published yet. They are not in this repo.
+two posts are up. [launch post](https://x.com/Oh_Jay0/status/2122967519400988987) and [second post](https://x.com/Oh_Jay0/status/2123448763549122669)
 
 ## How It Compares
 
@@ -178,7 +180,7 @@ Playwright's CI guide shows an HTML report uploaded as a workflow artifact. Rece
 | Recordings | None are committed under `tests/output-*`. Each run authors fresh. If a recording is present, Kane 0.10.4 replay ignores `--url`. The Action rewrites recorded Vercel origins onto the preview before Kane starts. |
 | Install on a second repo | Not done. |
 | Evidence packs | Need a GitHub sign-in. The comment says 30 days. |
-| Demo video and the two posts | Not made. |
+| demo video and the two posts | up. [demo video](https://youtu.be/mU3JYazU7XM), [launch post](https://x.com/Oh_Jay0/status/2122967519400988987), [second post](https://x.com/Oh_Jay0/status/2123448763549122669) |
 | CI on `ef46e78` | [Run 44022534156](https://github.com/ohjay-official/receipt/actions/runs/44022534156): Action unit tests passed, Shop build passed, Shop contracts failed. That failure is the seeded bugs. The shop tests expect checkout to match the $19 plan, LAUNCH10 to make $17.10, and Pay to be clickable at 390px. |
 | Privacy, security headers, sitemap | The production home response on 17 Nov 2026 included `nosniff`, `DENY`, `strict-origin-when-cross-origin`, and a camera/microphone/geolocation policy of `()`. `/robots.txt`, `/sitemap.xml`, and `/opengraph-image` returned 200. |
 
@@ -312,7 +314,7 @@ The public rules do not use numbered rule ids. These are the rules those pages s
 | Repo initialized on or after 12 November ([Luma](https://luma.com/kanecli-online-hackathon), [kaneclihack.sh](https://www.kaneclihack.sh/)) | `7ab4374` on 15 Nov 2026 |
 | Include a README with setup steps (Luma) | [Install It on Your Repo](#install-it-on-your-repo-5-steps) |
 | You must have run Kane CLI (both pages) | The runs linked in [Proof It's Real](#proof-its-real) |
-| Public repo, YouTube demo, two posts (kaneclihack.sh) | The repo is public. The video and the posts are not done. See [Demo video](#demo-video) and [Launch buzz](#launch-buzz). |
+| Public repo, YouTube demo, two posts (kaneclihack.sh) | the repo is public. the video and the posts are up. see [demo video](#demo-video) and [launch buzz](#launch-buzz). |
 
 **What was built each day.** Times below are the git author date. `+0100` is already WAT. `+0000` is UTC, so add one hour for WAT.
 
